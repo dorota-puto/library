@@ -1,16 +1,16 @@
 package libraryManager.model;
 
 public abstract class Book {
-    private Long bookId;
+    private Long bookIsbn;
     private String title;
     private String author;
     private String publisher;
     private Integer numberOfPages;
     private Language language;
 
-    public Long getBookId() { return bookId; }
+    public Long getBookIsbn() { return bookIsbn; }
 
-    public void setBookId(Long bookId) { this.bookId = bookId; }
+    public void setBookIsbn(Long bookIsbn) { this.bookIsbn = bookIsbn; }
 
     public String getTitle() { return title; }
 
