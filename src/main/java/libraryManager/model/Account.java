@@ -6,6 +6,12 @@ public class Account {
     private String accountName;
     private AccountState state;
 
+    public Account(Long accountId,String accountName, AccountState state){
+        this.accountId=accountId;
+        this.accountName=accountName;
+        this.state=state;
+    }
+
     public Long getAccountId() { return accountId; }
 
     public void setAccountId(Long accountId) { this.accountId = accountId; }

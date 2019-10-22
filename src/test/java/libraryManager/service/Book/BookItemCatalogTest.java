@@ -1,0 +1,100 @@
+package libraryManager.service.Book;
+
+import libraryManager.model.BookItem;
+import libraryManager.model.Language;
+import org.testng.annotations.Test;
+
+import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class BookItemCatalogTest {
+
+    BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
+    BookItem book2 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "bbb");
+
+    @Test
+    public void findBookItemByTitleTest() {
+
+        //given
+        BookItemCatalog bookItemCatalog = new BookItemCatalog();
+
+        //when
+        bookItemCatalog.add(book1);
+        bookItemCatalog.add(book2);
+
+        //then
+        assertThat(bookItemCatalog.findByTitle("Krzyżacy")).isEqualTo(Arrays.asList(book1, book2));
+    }
+
+    @Test
+    public void findBookItemByAuthorTest() {
+        //given
+        BookItemCatalog bookItemCatalog = new BookItemCatalog();
+
+        //when
+        bookItemCatalog.add(book1);
+        bookItemCatalog.add(book2);
+
+        //then
+        assertThat(bookItemCatalog.findByAuthor("Sienkiewicz")).isEqualTo(Arrays.asList(book1, book2));
+    }
+
+    @Test
+    public void findBookItemByIsbnTest() {
+        //given
+        BookItemCatalog bookItemCatalog = new BookItemCatalog();
+
+        //when
+        bookItemCatalog.add(book1);
+        bookItemCatalog.add(book2);
+
+        //then
+        assertThat(bookItemCatalog.findByIsbn(1L)).isEqualTo(Arrays.asList(book1, book2));
+    }
+
+    @Test
+    public void findBookItemByRfidTagTest() {
+        //given
+        BookItemCatalog bookItemCatalog = new BookItemCatalog();
+
+        //when
+        bookItemCatalog.add(book1);
+        bookItemCatalog.add(book2);
+
+        //then
+        assertThat(bookItemCatalog.findByRfidTag("aaa")).isEqualTo(book1);
+    }
+
+    @Test
+    public void findBookByIsbnTest() {
+
+        //given
+        BookItemCatalog bookItemCatalog = new BookItemCatalog();
+
+        //when
+        bookItemCatalog.add(book1);
+        bookItemCatalog.add(book2);
+
+
+        //then
+        assertThat(bookItemCatalog.findBookByIsbn(1L)).isEqualTo(book1);
+    }
+
+    @Test
+    public void removeBookItemTest() {
+
+        //given
+        BookItemCatalog bookItemCatalog = new BookItemCatalog();
+
+        //when
+        bookItemCatalog.add(book1);
+        bookItemCatalog.add(book2);
+        bookItemCatalog.remove("aaa");
+
+        //then
+        assertThat(bookItemCatalog.findBookByIsbn(1L)).isEqualTo(book2);
+    }
+
+    
+}

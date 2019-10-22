@@ -8,6 +8,15 @@ public abstract class Book {
     private Integer numberOfPages;
     private Language language;
 
+    public Book(Long bookIsbn,String title,String author,String publisher,Integer numberOfPages,Language language){
+        this.bookIsbn=bookIsbn;
+        this.title=title;
+        this.author=author;
+        this.publisher=publisher;
+        this.numberOfPages=numberOfPages;
+        this.language=language;
+    }
+
     public Long getBookIsbn() { return bookIsbn; }
 
     public void setBookIsbn(Long bookIsbn) { this.bookIsbn = bookIsbn; }

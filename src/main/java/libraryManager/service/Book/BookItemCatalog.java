@@ -3,7 +3,10 @@ package libraryManager.service.Book;
 import libraryManager.model.Book;
 import libraryManager.model.BookItem;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatalog, ISearchBookItemCatalog {
 
@@ -34,28 +37,63 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
     }
 
     @Override
-    public List<Book> findBookByTitle(String title) {
-        Set<Book> temp = new HashSet<>();
-        for (BookItem book : findByTitle(title)) {
-            if()
-
+    public List<Book> findBookByAuthor(String author) {
+        List<Book> temp = new ArrayList<>();
+        List<BookItem> foundBooks = findByAuthor(author);
+        for (BookItem book : foundBooks) {
+            if (!temp.contains(book)) {
+                temp.add(book);
+            }
         }
-
+        return temp;
     }
 
     @Override
-    public Book findBookByIsbn(Long isbn){
+    public List<Book> findBookByTitle(String title) {
+        List<Book> temp = new ArrayList<>();
+        List<BookItem> foundBooks = findByTitle(title);
+        for (BookItem book : foundBooks) {
+            if (!temp.contains(book)) {
+                temp.add(book);
+            }
+        }
+        return temp;
+    }
+
+    @Override
+    public Book findBookByIsbn(Long isbn) {
         return findByIsbn(isbn).get(0);
     }
 
 
     @Override
     public Boolean add(BookItem book) {
+
         if (!bookItemsByRfidTag.containsValue(book)) {
             bookItemsByRfidTag.put(book.getRfidTag(), book);
-            bookItemsByIsbn.get(book.getBookIsbn()).add(book);
-            bookItemsByAuthor.get(book.getAuthor()).add(book);
-            bookItemsByTitle.get(book.getTitle()).add(book);
+
+            if (bookItemsByIsbn.containsKey(book.getBookIsbn())) {
+                bookItemsByIsbn.get(book.getBookIsbn()).add(book);
+            } else {
+                List<BookItem> bookItems = new ArrayList<>();
+                bookItems.add(book);
+                bookItemsByIsbn.put(book.getBookIsbn(), bookItems);
+            }
+            if (bookItemsByAuthor.containsKey(book.getAuthor())) {
+                bookItemsByAuthor.get(book.getAuthor()).add(book);
+            } else {
+                List<BookItem> bookItems = new ArrayList<>();
+                bookItems.add(book);
+                bookItemsByAuthor.put(book.getAuthor(), bookItems);
+            }
+
+            if (bookItemsByTitle.containsKey(book.getTitle())) {
+                bookItemsByTitle.get(book.getTitle()).add(book);
+            } else {
+                List<BookItem> bookItems = new ArrayList<>();
+                bookItems.add(book);
+                bookItemsByTitle.put(book.getTitle(), bookItems);
+            }
             return true;
         }
         return false;
@@ -64,11 +102,11 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
     @Override
     public Boolean remove(String rfidTag) {
         if (bookItemsByRfidTag.containsKey(rfidTag)) {
-            bookItemsByRfidTag.remove(rfidTag);
             BookItem bookToRemove = findByRfidTag(rfidTag);
-            bookItemsByIsbn.remove(bookToRemove.getBookIsbn());
-            bookItemsByAuthor.remove(bookToRemove.getAuthor());
-            bookItemsByTitle.remove(bookToRemove.getTitle());
+            bookItemsByRfidTag.remove(rfidTag);
+            bookItemsByIsbn.get(bookToRemove.getBookIsbn()).remove(bookToRemove);
+            bookItemsByAuthor.get(bookToRemove.getAuthor()).remove(bookToRemove);
+            bookItemsByTitle.get(bookToRemove.getTitle()).remove(bookToRemove);
             return true;
         }
         return false;
