@@ -12,6 +12,7 @@ public class BookItemCatalogTest {
 
     BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
     BookItem book2 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "bbb");
+    BookItem book3 = new BookItem(2L, "Pan Tadeusz", "Mickiewicz", "Zysk i Ska", 200, Language.POLISH, "ccc");
 
     @Test
     public void findBookItemByTitleTest() {
@@ -46,6 +47,7 @@ public class BookItemCatalogTest {
         BookItemCatalog bookItemCatalog = new BookItemCatalog();
 
         //when
+        bookItemCatalog.add(book1);
         bookItemCatalog.add(book1);
         bookItemCatalog.add(book2);
 
@@ -96,5 +98,34 @@ public class BookItemCatalogTest {
         assertThat(bookItemCatalog.findBookByIsbn(1L)).isEqualTo(book2);
     }
 
-    
+    @Test
+    public void findBookByAuthorTest(){
+
+        //given
+        BookItemCatalog bookItemCatalog = new BookItemCatalog();
+
+        //when
+        bookItemCatalog.add(book1);
+        bookItemCatalog.add(book2);
+        bookItemCatalog.add(book3);
+
+        //then
+        assertThat(bookItemCatalog.findBookByAuthor("Sienkiewicz")).isEqualTo(Arrays.asList(book1,book2));
+    }
+
+    @Test
+    public void findBookByTitleTest(){
+
+        //given
+        BookItemCatalog bookItemCatalog = new BookItemCatalog();
+
+        //when
+        bookItemCatalog.add(book1);
+        bookItemCatalog.add(book2);
+        bookItemCatalog.add(book3);
+
+        //then
+        assertThat(bookItemCatalog.findBookByTitle("Krzyżacy")).isEqualTo(Arrays.asList(book1,book2));
+    }
+
 }

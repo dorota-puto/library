@@ -1,26 +1,50 @@
 package libraryManager.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class LentBookInfo {
     private String rfidTag;
     private Long borrowerAccountId;
-    private Date borrowDate;
-    private Date dueDate;
+    private LocalDate borrowDate;
+    private LocalDate dueDate;
 
-    public String getRfidTag() { return rfidTag; }
+    public LentBookInfo(String rfidTag, Long borrowerAccountId, LocalDate borrowDate, LocalDate dueDate) {
+        this.rfidTag = rfidTag;
+        this.borrowerAccountId = borrowerAccountId;
+        this.borrowDate = borrowDate;
+        this.dueDate = dueDate;
+    }
 
-    public void setRfidTag(String rfidTag) { this.rfidTag = rfidTag; }
+    public String getRfidTag() {
+        return rfidTag;
+    }
 
-    public Long getBorrowerAccountId() { return borrowerAccountId; }
+    public void setRfidTag(String rfidTag) {
+        this.rfidTag = rfidTag;
+    }
 
-    public void setBorrowerAccountId(Long borrowerAccountId) { this.borrowerAccountId = borrowerAccountId; }
+    public Long getBorrowerAccountId() {
+        return borrowerAccountId;
+    }
 
-    public Date getBorrowDate() { return borrowDate; }
+    public void setBorrowerAccountId(Long borrowerAccountId) {
+        this.borrowerAccountId = borrowerAccountId;
+    }
 
-    public void setBorrowDate(Date borrowDate) { this.borrowDate = borrowDate; }
+    public LocalDate getBorrowDate() {
+        return borrowDate;
+    }
 
-    public Date getDueDate() { return dueDate; }
+    public void setBorrowDate(LocalDate borrowDate) {
+        this.borrowDate = borrowDate;
+    }
 
-    public void setDueDate(Date dueDate) { this.dueDate = dueDate; }
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
 }
