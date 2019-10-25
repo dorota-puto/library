@@ -29,10 +29,12 @@ public class BookLendingManager {
 
 
     public int checkBookAvailability(Long isbn) {
+        // todo: what if isbn does not exists - add unit test
         return bookItemCatalog.findByIsbn(isbn).size();
     }
 
     private int checkNumberOfBooksBorrowedBy(Long accountId) {
+        // todo: what if isbn does not exists - add unit test
         return lentBookInfoByAccountId.get(accountId).size();
     }
 
@@ -57,7 +59,7 @@ public class BookLendingManager {
     }
 
     public LentBookInfo lend(Long accountId, Long isbn) {
-
+        // todo: improve readability of the condition in 'if' statement
         if (accountCatalog.findById(accountId).getState().equals(AccountState.ACTIVE) &&
                 !hasOverDueBook(isbn) &&
                 checkBookAvailability(isbn) > 0 &&
@@ -71,6 +73,7 @@ public class BookLendingManager {
 
             lentBookInfoByRfidTag.put(book.getRfidTag(), lentBookInfo);
 
+            // todo: common parts of if-else branches can be extracted out of if-else
             if (lentBookInfoByAccountId.get(accountId) != null) {
                 List<LentBookInfo> list = lentBookInfoByAccountId.get(accountId);
                 list.add(lentBookInfo);

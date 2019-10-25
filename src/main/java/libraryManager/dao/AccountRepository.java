@@ -6,7 +6,7 @@ import libraryManager.service.Account.AccountCatalog;
 
 import java.util.ArrayList;
 import java.util.List;
-
+// todo: remove this class
 public class AccountRepository {
 //    private AccountCatalog catalog= new AccountCatalog();
 //

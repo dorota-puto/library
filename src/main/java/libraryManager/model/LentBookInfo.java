@@ -9,7 +9,6 @@ public class LentBookInfo {
     private LocalDate borrowDate;
     private LocalDate dueDate;
 
-
     public LentBookInfo(String rfidTag, Long borrowerAccountId, LocalDate borrowDate, LocalDate dueDate) {
         this.rfidTag = rfidTag;
         this.borrowerAccountId = borrowerAccountId;

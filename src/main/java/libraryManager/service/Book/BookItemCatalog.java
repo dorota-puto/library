@@ -38,6 +38,7 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
 
     @Override
     public List<Book> findBookByAuthor(String author) {
+        // todo: fix implementation
         List<Book> temp = new ArrayList<>();
         List<BookItem> foundBooks = findByAuthor(author);
         for (BookItem book : foundBooks) {
@@ -50,6 +51,7 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
 
     @Override
     public List<Book> findBookByTitle(String title) {
+        //todo: fix
         List<Book> temp = new ArrayList<>();
         List<BookItem> foundBooks = findByTitle(title);
         for (BookItem book : foundBooks) {
@@ -62,13 +64,14 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
 
     @Override
     public Book findBookByIsbn(Long isbn) {
+        // todo: test when no books of given isbn
         return findByIsbn(isbn).get(0);
     }
 
 
     @Override
     public Boolean add(BookItem book) {
-
+        // todo: maybe extract some of the code to separate methods to increase visibility
         if (!bookItemsByRfidTag.containsValue(book)) {
             bookItemsByRfidTag.put(book.getRfidTag(), book);
 

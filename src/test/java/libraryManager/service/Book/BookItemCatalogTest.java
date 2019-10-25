@@ -110,6 +110,7 @@ public class BookItemCatalogTest {
         bookItemCatalog.add(book3);
 
         //then
+        // todo: invalid assertion - should return only one book
         assertThat(bookItemCatalog.findBookByAuthor("Sienkiewicz")).isEqualTo(Arrays.asList(book1,book2));
     }
 
