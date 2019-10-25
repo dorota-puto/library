@@ -1,30 +1,32 @@
 package libraryManager.service.LendingManager;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import libraryManager.model.AccountState;
 import libraryManager.model.BookItem;
 import libraryManager.model.LentBookInfo;
 import libraryManager.service.Account.AccountCatalog;
+import libraryManager.service.Account.ISearchAccountCatalog;
 import libraryManager.service.Book.BookItemCatalog;
+import libraryManager.service.Book.ISearchBookItemCatalog;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class BookLendingManager {
 
-    private AccountCatalog accountCatalog;
-    private BookItemCatalog bookItemCatalog;
+    private ISearchAccountCatalog accountCatalog;
+    private ISearchBookItemCatalog bookItemCatalog;
 
-    public BookLendingManager(AccountCatalog accountCatalog, BookItemCatalog bookItemCatalog) {
+    private Map<Long, List<LentBookInfo>> lentBookInfoByAccountId = new HashMap<>();
+    private Map<String, LentBookInfo> lentBookInfoByRfidTag = new HashMap<>();
+
+    public BookLendingManager(ISearchAccountCatalog accountCatalog, ISearchBookItemCatalog bookItemCatalog) {
         this.accountCatalog = accountCatalog;
         this.bookItemCatalog = bookItemCatalog;
     }
 
-    private Map<Long, List<LentBookInfo>> lentBookInfoByAccountId = new HashMap<>();
-    private Map<String, LentBookInfo> lentBookInfoByRfidTag = new HashMap<>();
 
     public int checkBookAvailability(Long isbn) {
         return bookItemCatalog.findByIsbn(isbn).size();
@@ -35,9 +37,11 @@ public class BookLendingManager {
     }
 
     private Boolean hasOverDueBook(Long accountId) {
-        for (LentBookInfo info : lentBookInfoByAccountId.get(accountId)) {
-            if (info.getDueDate().isBefore(LocalDate.now())) {
-                return true;
+        if (lentBookInfoByAccountId.get(accountId) != null) {
+            for (LentBookInfo info : lentBookInfoByAccountId.get(accountId)) {
+                if (info.getDueDate().isBefore(LocalDate.now())) {
+                    return true;
+                }
             }
         }
         return false;
@@ -55,9 +59,9 @@ public class BookLendingManager {
     public LentBookInfo lend(Long accountId, Long isbn) {
 
         if (accountCatalog.findById(accountId).getState().equals(AccountState.ACTIVE) &&
-                lentBookInfoByAccountId.get(accountId).size() < 4 &&
                 !hasOverDueBook(isbn) &&
                 checkBookAvailability(isbn) > 0 &&
+                (lentBookInfoByAccountId.get(accountId) == null || lentBookInfoByAccountId.get(accountId).size() < 4) &&
                 bookToLent(isbn) != null) {
 
             BookItem book = bookToLent(isbn);
@@ -67,24 +71,29 @@ public class BookLendingManager {
 
             lentBookInfoByRfidTag.put(book.getRfidTag(), lentBookInfo);
 
-            List<LentBookInfo> list = lentBookInfoByAccountId.get(accountId);
-            list.add(lentBookInfo);
-            lentBookInfoByAccountId.put(accountId, list);
-
+            if (lentBookInfoByAccountId.get(accountId) != null) {
+                List<LentBookInfo> list = lentBookInfoByAccountId.get(accountId);
+                list.add(lentBookInfo);
+                lentBookInfoByAccountId.put(accountId, list);
+            } else {
+                List<LentBookInfo> list = new ArrayList<>();
+                list.add(lentBookInfo);
+                lentBookInfoByAccountId.put(accountId, list);
+            }
             return lentBookInfo;
         }
         throw new IllegalArgumentException();
     }
 
-    public Boolean returnBook(Long accountId, String rfidTag){
-        if(bookItemCatalog.findByRfidTag(rfidTag)!=null &&
-        lentBookInfoByRfidTag.get(rfidTag)!=null){
+    public Boolean returnBook(Long accountId, String rfidTag) {
+        if (bookItemCatalog.findByRfidTag(rfidTag) != null &&
+                lentBookInfoByRfidTag.get(rfidTag) != null) {
 
             lentBookInfoByRfidTag.remove(rfidTag);
 
-            List<LentBookInfo> list=lentBookInfoByAccountId.get(accountId);
-            for (LentBookInfo info:list) {
-                if(info.getRfidTag().equals(rfidTag)){
+            List<LentBookInfo> list = lentBookInfoByAccountId.get(accountId);
+            for (LentBookInfo info : list) {
+                if (info.getRfidTag().equals(rfidTag)) {
                     list.remove(info);
                     return true;
                 }
