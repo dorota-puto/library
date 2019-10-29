@@ -1,4 +1,4 @@
-package libraryManager.service.Book;
+package libraryManager.service.book;
 
 import libraryManager.model.BookItem;
 

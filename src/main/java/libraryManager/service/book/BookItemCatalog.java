@@ -1,4 +1,4 @@
-package libraryManager.service.Book;
+package libraryManager.service.book;
 
 import libraryManager.model.Book;
 import libraryManager.model.BookItem;
@@ -38,65 +38,90 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
 
     @Override
     public List<Book> findBookByAuthor(String author) {
-        // todo: fix implementation
         List<Book> temp = new ArrayList<>();
         List<BookItem> foundBooks = findByAuthor(author);
-        for (BookItem book : foundBooks) {
-            if (!temp.contains(book)) {
-                temp.add(book);
+        if (foundBooks!=null) {
+            for (BookItem book1 : foundBooks) {
+                if (temp.size() == 0) {
+                    temp.add(book1);
+                }
+                for (Book book2 : temp) {
+                    if (book1.getBookIsbn() != book2.getBookIsbn()) {
+                        temp.add(book1);
+                    }
+                }
             }
-        }
-        return temp;
+            return temp;
+        }else return null;
     }
 
     @Override
     public List<Book> findBookByTitle(String title) {
-        //todo: fix
         List<Book> temp = new ArrayList<>();
         List<BookItem> foundBooks = findByTitle(title);
-        for (BookItem book : foundBooks) {
-            if (!temp.contains(book)) {
-                temp.add(book);
+        if (foundBooks!=null) {
+            for (BookItem book1 : foundBooks) {
+                if (temp.size() == 0) {
+                    temp.add(book1);
+                }
+                for (Book book2 : temp) {
+                    if (book1.getBookIsbn() != book2.getBookIsbn()) {
+                        temp.add(book1);
+                    }
+                }
             }
-        }
-        return temp;
+            return temp;
+        }else return null;
+
     }
 
     @Override
     public Book findBookByIsbn(Long isbn) {
-        // todo: test when no books of given isbn
-        return findByIsbn(isbn).get(0);
+        if(findByIsbn(isbn)!=null) {
+            return findByIsbn(isbn).get(0);
+        }else return null;
     }
 
+    private void addToBookItemsByIsbn(BookItem book) {
+        if (bookItemsByIsbn.containsKey(book.getBookIsbn())) {
+            bookItemsByIsbn.get(book.getBookIsbn()).add(book);
+        } else {
+            List<BookItem> bookItems = new ArrayList<>();
+            bookItems.add(book);
+            bookItemsByIsbn.put(book.getBookIsbn(), bookItems);
+        }
+    }
+
+    private void addToBookItemsByAuthor(BookItem book) {
+        if (bookItemsByAuthor.containsKey(book.getAuthor())) {
+            bookItemsByAuthor.get(book.getAuthor()).add(book);
+        } else {
+            List<BookItem> bookItems = new ArrayList<>();
+            bookItems.add(book);
+            bookItemsByAuthor.put(book.getAuthor(), bookItems);
+        }
+    }
+
+    private void addToBookItemsByTitle(BookItem book) {
+        if (bookItemsByTitle.containsKey(book.getTitle())) {
+            bookItemsByTitle.get(book.getTitle()).add(book);
+        } else {
+            List<BookItem> bookItems = new ArrayList<>();
+            bookItems.add(book);
+            bookItemsByTitle.put(book.getTitle(), bookItems);
+        }
+    }
 
     @Override
     public Boolean add(BookItem book) {
-        // todo: maybe extract some of the code to separate methods to increase visibility
+
         if (!bookItemsByRfidTag.containsValue(book)) {
             bookItemsByRfidTag.put(book.getRfidTag(), book);
 
-            if (bookItemsByIsbn.containsKey(book.getBookIsbn())) {
-                bookItemsByIsbn.get(book.getBookIsbn()).add(book);
-            } else {
-                List<BookItem> bookItems = new ArrayList<>();
-                bookItems.add(book);
-                bookItemsByIsbn.put(book.getBookIsbn(), bookItems);
-            }
-            if (bookItemsByAuthor.containsKey(book.getAuthor())) {
-                bookItemsByAuthor.get(book.getAuthor()).add(book);
-            } else {
-                List<BookItem> bookItems = new ArrayList<>();
-                bookItems.add(book);
-                bookItemsByAuthor.put(book.getAuthor(), bookItems);
-            }
+            addToBookItemsByAuthor(book);
+            addToBookItemsByIsbn(book);
+            addToBookItemsByTitle(book);
 
-            if (bookItemsByTitle.containsKey(book.getTitle())) {
-                bookItemsByTitle.get(book.getTitle()).add(book);
-            } else {
-                List<BookItem> bookItems = new ArrayList<>();
-                bookItems.add(book);
-                bookItemsByTitle.put(book.getTitle(), bookItems);
-            }
             return true;
         }
         return false;

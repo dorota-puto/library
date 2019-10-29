@@ -1,12 +1,10 @@
-package libraryManager.service.LendingManager;
+package libraryManager.service.lendingManager;
 
 import libraryManager.model.AccountState;
 import libraryManager.model.BookItem;
 import libraryManager.model.LentBookInfo;
-import libraryManager.service.Account.AccountCatalog;
-import libraryManager.service.Account.ISearchAccountCatalog;
-import libraryManager.service.Book.BookItemCatalog;
-import libraryManager.service.Book.ISearchBookItemCatalog;
+import libraryManager.service.account.ISearchAccountCatalog;
+import libraryManager.service.book.ISearchBookItemCatalog;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,13 +27,19 @@ public class BookLendingManager {
 
 
     public int checkBookAvailability(Long isbn) {
-        // todo: what if isbn does not exists - add unit test
-        return bookItemCatalog.findByIsbn(isbn).size();
+        List<BookItem> byIsbn = bookItemCatalog.findByIsbn(isbn);
+        if (byIsbn != null) {
+            return byIsbn.size();
+        }
+        return 0;
     }
 
     private int checkNumberOfBooksBorrowedBy(Long accountId) {
-        // todo: what if isbn does not exists - add unit test
-        return lentBookInfoByAccountId.get(accountId).size();
+        List<LentBookInfo> infos = lentBookInfoByAccountId.get(accountId);
+        if (infos != null) {
+            return infos.size();
+        }
+        return 0;
     }
 
     private Boolean hasOverDueBook(Long accountId) {
@@ -58,12 +62,20 @@ public class BookLendingManager {
         return null;
     }
 
+    private Boolean isAccountActive(Long accountId) {
+        return accountCatalog.findById(accountId).getState().equals(AccountState.ACTIVE);
+    }
+
+    private Boolean canLendMoreBooks(Long accountId) {
+        return (lentBookInfoByAccountId.get(accountId) == null || lentBookInfoByAccountId.get(accountId).size() < 4);
+    }
+
     public LentBookInfo lend(Long accountId, Long isbn) {
-        // todo: improve readability of the condition in 'if' statement
-        if (accountCatalog.findById(accountId).getState().equals(AccountState.ACTIVE) &&
+
+        if (isAccountActive(accountId) &&
                 !hasOverDueBook(isbn) &&
                 checkBookAvailability(isbn) > 0 &&
-                (lentBookInfoByAccountId.get(accountId) == null || lentBookInfoByAccountId.get(accountId).size() < 4) &&
+                canLendMoreBooks(accountId) &&
                 bookToLent(isbn) != null) {
 
             BookItem book = bookToLent(isbn);
@@ -73,16 +85,12 @@ public class BookLendingManager {
 
             lentBookInfoByRfidTag.put(book.getRfidTag(), lentBookInfo);
 
-            // todo: common parts of if-else branches can be extracted out of if-else
+            List<LentBookInfo> list = new ArrayList<>();
             if (lentBookInfoByAccountId.get(accountId) != null) {
-                List<LentBookInfo> list = lentBookInfoByAccountId.get(accountId);
-                list.add(lentBookInfo);
-                lentBookInfoByAccountId.put(accountId, list);
-            } else {
-                List<LentBookInfo> list = new ArrayList<>();
-                list.add(lentBookInfo);
-                lentBookInfoByAccountId.put(accountId, list);
+                list = lentBookInfoByAccountId.get(accountId);
             }
+            list.add(lentBookInfo);
+            lentBookInfoByAccountId.put(accountId, list);
             return lentBookInfo;
         }
         throw new IllegalArgumentException();

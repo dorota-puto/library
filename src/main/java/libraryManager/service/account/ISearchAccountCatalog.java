@@ -1,4 +1,4 @@
-package libraryManager.service.Account;
+package libraryManager.service.account;
 
 import libraryManager.model.Account;
 

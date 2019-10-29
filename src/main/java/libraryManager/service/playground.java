@@ -9,7 +9,7 @@ public class playground {
         LocalDate today = LocalDate.now();
         LocalDate returnDay = today.plusDays(30);
 
-      //  System.out.println(today);
-      //  System.out.println(returnDay);
+       System.out.println(today);
+        System.out.println(returnDay);
     }
 }

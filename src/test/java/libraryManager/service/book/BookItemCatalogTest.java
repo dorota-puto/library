@@ -1,4 +1,4 @@
-package libraryManager.service.Book;
+package libraryManager.service.book;
 
 import libraryManager.model.BookItem;
 import libraryManager.model.Language;
@@ -84,6 +84,20 @@ public class BookItemCatalogTest {
     }
 
     @Test
+    public void findBookByIsbnWhenNoSuchIsbnTest() {
+
+        //given
+        BookItemCatalog bookItemCatalog = new BookItemCatalog();
+
+        //when
+        bookItemCatalog.add(book1);
+        bookItemCatalog.add(book2);
+
+
+        //then
+        assertThat(bookItemCatalog.findBookByIsbn(5L)).isEqualTo(null);
+    }
+    @Test
     public void removeBookItemTest() {
 
         //given
@@ -110,10 +124,24 @@ public class BookItemCatalogTest {
         bookItemCatalog.add(book3);
 
         //then
-        // todo: invalid assertion - should return only one book
-        assertThat(bookItemCatalog.findBookByAuthor("Sienkiewicz")).isEqualTo(Arrays.asList(book1,book2));
+        assertThat(bookItemCatalog.findBookByAuthor("Sienkiewicz")).isEqualTo(Arrays.asList(book1));
     }
 
+    @Test
+    public void findBookByAuthorWhenNoSuchAuthorInLibraryTest(){
+
+        //given
+        BookItemCatalog bookItemCatalog = new BookItemCatalog();
+
+        //when
+        bookItemCatalog.add(book1);
+        bookItemCatalog.add(book2);
+        bookItemCatalog.add(book3);
+
+        //then
+
+        assertThat(bookItemCatalog.findBookByAuthor("Słowacki")).isEqualTo(null);
+    }
     @Test
     public void findBookByTitleTest(){
 
@@ -126,7 +154,7 @@ public class BookItemCatalogTest {
         bookItemCatalog.add(book3);
 
         //then
-        assertThat(bookItemCatalog.findBookByTitle("Krzyżacy")).isEqualTo(Arrays.asList(book1,book2));
+        assertThat(bookItemCatalog.findBookByTitle("Krzyżacy")).isEqualTo(Arrays.asList(book1));
     }
 
 }

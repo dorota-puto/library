@@ -1,5 +1,4 @@
-package libraryManager.service.Account;
-// todo: package should be lowercase, check also other places
+package libraryManager.service.account;
 
 import libraryManager.model.Account;
 import libraryManager.model.AccountState;
@@ -21,29 +20,28 @@ public class AccountCatalog implements ISearchAccountCatalog, IManageAccountCata
     }
 
     @Override
-    public Account suspend(Long id) {
+    public Boolean suspend(Long id) {
         if (accountById.containsKey(id)) {
             accountById.get(id).setState(AccountState.SUSPENDED);
         } else {
-            throw new IllegalArgumentException();
+            return false;
         }
-        return accountById.get(id);
+        return true;
     }
 
     @Override
-    public Account unSuspend(Long id) {
+    public Boolean unSuspend(Long id) {
         if (accountById.containsKey(id)) {
             Account account = accountById.get(id);
             account.setState(AccountState.ACTIVE);
-            return account;
+            return true;
         } else {
-            throw new IllegalArgumentException();
+            return false;
         }
     }
 
     @Override
     public Account findById(Long id) {
-        // todo: get by default returns null when key not present
-        return accountById.getOrDefault(id, null);
+        return accountById.get(id);
     }
 }
