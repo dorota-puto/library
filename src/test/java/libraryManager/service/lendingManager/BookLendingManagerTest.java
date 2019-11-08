@@ -28,7 +28,7 @@ public class BookLendingManagerTest {
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1, book2));
 
-        LentBookInfo expectedLentBookInfo = new LentBookInfo("aaa", 111L, LocalDate.of(2019, 10, 29), LocalDate.of(2019, 11, 28));
+        LentBookInfo expectedLentBookInfo = new LentBookInfo("aaa", 111L, LocalDate.now(), LocalDate.now().plusDays(30));
 
         //when
         LentBookInfo lentBookInfo = bookLendingManager.lend(111L, 1L);
@@ -49,7 +49,7 @@ public class BookLendingManagerTest {
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1, book2));
 
-        LentBookInfo expectedLentBookInfo = new LentBookInfo("bbb", 111L, LocalDate.of(2019, 10, 29), LocalDate.of(2019, 11, 28));
+        LentBookInfo expectedLentBookInfo = new LentBookInfo("bbb", 111L, LocalDate.now(), LocalDate.now().plusDays(30));
 
         //when
         LentBookInfo lentBookInfo1 = bookLendingManager.lend(111L, 1L);
