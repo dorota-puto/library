@@ -3,6 +3,7 @@ package libraryManager.service.lendingManager;
 import libraryManager.model.*;
 import libraryManager.service.account.ISearchAccountCatalog;
 import libraryManager.service.book.ISearchBookItemCatalog;
+import libraryManager.service.historyManager.HistoryManager;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -127,10 +128,11 @@ public class BookLendingManagerTest {
         //given
         ISearchAccountCatalog accountCatalogMock = mock(ISearchAccountCatalog.class);
         ISearchBookItemCatalog bookCatalogMock = mock(ISearchBookItemCatalog.class);
+        HistoryManager historyManagerMock = mock(HistoryManager.class);
 
         BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
 
-        BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock);
+        BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock);
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
         given(bookCatalogMock.findByRfidTag("aaa")).willReturn(book1);
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1));
@@ -141,6 +143,7 @@ public class BookLendingManagerTest {
 
         //then
         assertThat(isReturned).isEqualTo(true);
+
     }
 
     @Test
