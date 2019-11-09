@@ -4,6 +4,7 @@ import libraryManager.model.*;
 import libraryManager.service.account.ISearchAccountCatalog;
 import libraryManager.service.book.ISearchBookItemCatalog;
 import libraryManager.service.historyManager.HistoryManager;
+import org.mockito.ArgumentCaptor;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,7 +12,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
 
@@ -143,9 +146,37 @@ public class BookLendingManagerTest {
 
         //then
         assertThat(isReturned).isEqualTo(true);
-
     }
 
+    @Test
+    public void addingLentBookInfoToHistoryManagerWhenReturnTest() {
+        //given
+        ISearchAccountCatalog accountCatalogMock = mock(ISearchAccountCatalog.class);
+        ISearchBookItemCatalog bookCatalogMock = mock(ISearchBookItemCatalog.class);
+        HistoryManager historyManagerMock = mock(HistoryManager.class);
+
+        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
+
+        BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock);
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
+        given(bookCatalogMock.findByRfidTag("aaa")).willReturn(book1);
+        given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1));
+
+        ArgumentCaptor<LentBookInfo> argument = ArgumentCaptor.forClass(LentBookInfo.class);
+
+        //when
+        bookLendingManager.lend(111L, 1L);
+        bookLendingManager.returnBook(111L, "aaa");
+
+        //then
+
+        verify(historyManagerMock).add(eq(111L), argument.capture());
+        assertThat("aaa").isEqualTo(argument.getValue().getRfidTag());
+        assertThat(111L).isEqualTo(argument.getValue().getBorrowerAccountId());
+        assertThat(LocalDate.now()).isEqualTo(argument.getValue().getBorrowDate());
+        assertThat(argument.getValue().getDueDate()).isNotNull();
+
+    }
     @Test
     public void returnNotLentBookTest() {
         //given
