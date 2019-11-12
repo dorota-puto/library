@@ -6,6 +6,7 @@ import libraryManager.model.LentBookInfo;
 import libraryManager.service.account.ISearchAccountCatalog;
 import libraryManager.service.book.ISearchBookItemCatalog;
 import libraryManager.service.historyManager.HistoryManager;
+import libraryManager.service.reservationManager.BookReservationManager;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class BookLendingManager {
     private ISearchAccountCatalog accountCatalog;
     private ISearchBookItemCatalog bookItemCatalog;
     private HistoryManager historyManager;
+    private BookReservationManager reservationManager;
 
     private Map<Long, List<LentBookInfo>> lentBookInfoByAccountId = new HashMap<>();
     private Map<String, LentBookInfo> lentBookInfoByRfidTag = new HashMap<>();
@@ -27,19 +29,11 @@ public class BookLendingManager {
         this.bookItemCatalog = bookItemCatalog;
     }
 
-    public BookLendingManager(ISearchAccountCatalog accountCatalog, ISearchBookItemCatalog bookItemCatalog, HistoryManager historyManager) {
+    public BookLendingManager(ISearchAccountCatalog accountCatalog, ISearchBookItemCatalog bookItemCatalog, HistoryManager historyManager, BookReservationManager reservationManager) {
         this.accountCatalog = accountCatalog;
         this.bookItemCatalog = bookItemCatalog;
         this.historyManager = historyManager;
-    }
-
-
-    public int checkBookAvailability(Long isbn) {
-        List<BookItem> byIsbn = bookItemCatalog.findByIsbn(isbn);
-        if (byIsbn != null) {
-            return byIsbn.size();
-        }
-        return 0;
+        this.reservationManager = reservationManager;
     }
 
     private int checkNumberOfBooksBorrowedBy(Long accountId) {
@@ -61,9 +55,18 @@ public class BookLendingManager {
         return false;
     }
 
-    private BookItem bookToLent(Long isbn) {
+    public int checkBookAvailability(Long isbn) {
+        List<BookItem> byIsbn = bookItemCatalog.findByIsbn(isbn);
+        if (byIsbn != null) {
+            return byIsbn.size();
+        }
+        return 0;
+    }
+
+    private BookItem bookToLent(Long accountId, Long isbn) {
         for (BookItem book : bookItemCatalog.findByIsbn(isbn)) {
-            if (lentBookInfoByRfidTag.get(book.getRfidTag()) == null) {
+            if (lentBookInfoByRfidTag.get(book.getRfidTag()) == null &&
+                    reservationManager.isAllowedOrReservedForThisAccount(accountId, book)) {
                 return book;
             }
         }
@@ -79,14 +82,14 @@ public class BookLendingManager {
     }
 
     public LentBookInfo lend(Long accountId, Long isbn) {
-
+        reservationManager.cancelReservationIfOverDue();
+        BookItem book = bookToLent(accountId, isbn);
         if (isAccountActive(accountId) &&
                 !hasOverDueBook(isbn) &&
                 checkBookAvailability(isbn) > 0 &&
                 canLendMoreBooks(accountId) &&
-                bookToLent(isbn) != null) {
+                book != null) {
 
-            BookItem book = bookToLent(isbn);
             LocalDate today = LocalDate.now();
             LocalDate returnDay = today.plusDays(30);
             LentBookInfo lentBookInfo = new LentBookInfo(book.getRfidTag(), accountId, today, returnDay);
@@ -99,12 +102,13 @@ public class BookLendingManager {
             }
             list.add(lentBookInfo);
             lentBookInfoByAccountId.put(accountId, list);
+            reservationManager.removeFromReservationCatalog(book);
             return lentBookInfo;
         }
         throw new IllegalArgumentException();
     }
 
-    public LentBookInfo transform (LentBookInfo info) {
+    public LentBookInfo transform(LentBookInfo info) {
         info.setDueDate(LocalDate.now());
         return info;
     }
@@ -115,6 +119,7 @@ public class BookLendingManager {
 
             LentBookInfo newInfo = lentBookInfoByRfidTag.remove(rfidTag);
             historyManager.add(accountId, transform(newInfo));
+            reservationManager.addToReservationCatalog(bookItemCatalog.findByRfidTag(rfidTag));
 
             List<LentBookInfo> list = lentBookInfoByAccountId.get(accountId);
             for (LentBookInfo info : list) {
