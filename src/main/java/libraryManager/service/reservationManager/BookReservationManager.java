@@ -1,6 +1,5 @@
 package libraryManager.service.reservationManager;
 
-import com.sun.tools.javac.util.Pair;
 import libraryManager.model.BookItem;
 import libraryManager.model.ReservedBookInfo;
 import libraryManager.service.account.ISearchAccountCatalog;
@@ -9,20 +8,22 @@ import libraryManager.service.book.ISearchBookItemCatalog;
 import java.time.LocalDate;
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
 
 public class BookReservationManager {
     private ISearchAccountCatalog accountCatalog;
     private ISearchBookItemCatalog bookItemCatalog;
 
+    private Set<String> allowedBookItemsByRfidTag;
+    private Map<String, ReservedBookInfo> reservedBookItemsByRfidTag = new HashMap<>();
+    private Map<Long, List<ReservedBookInfo>> reservedBookItemsByAccountId = new HashMap<>();
+
+
     public BookReservationManager(ISearchAccountCatalog accountCatalog, ISearchBookItemCatalog bookItemCatalog) {
         this.accountCatalog = accountCatalog;
         this.bookItemCatalog = bookItemCatalog;
-    }
+        allowedBookItemsByRfidTag = bookItemCatalog.getRfidTagsFromCatalog();
 
-    private Set<String> allowedBookItemsByRfidTag = new HashSet<>();
-    private Map<String, ReservedBookInfo> reservedBookItemsByRfidTag = new HashMap<>();
-    private Map<Long, List<ReservedBookInfo>> reservedBookItemsByAccountId = new HashMap<>();
+    }
 
 
     public void addToReservationCatalog(String rfidTag) {

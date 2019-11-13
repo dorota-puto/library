@@ -24,11 +24,6 @@ public class BookLendingManager {
     private Map<Long, List<LentBookInfo>> lentBookInfoByAccountId = new HashMap<>();
     private Map<String, LentBookInfo> lentBookInfoByRfidTag = new HashMap<>();
 
-    public BookLendingManager(ISearchAccountCatalog accountCatalog, ISearchBookItemCatalog bookItemCatalog) {
-        this.accountCatalog = accountCatalog;
-        this.bookItemCatalog = bookItemCatalog;
-    }
-
     public BookLendingManager(ISearchAccountCatalog accountCatalog, ISearchBookItemCatalog bookItemCatalog, HistoryManager historyManager, BookReservationManager reservationManager) {
         this.accountCatalog = accountCatalog;
         this.bookItemCatalog = bookItemCatalog;
@@ -64,11 +59,14 @@ public class BookLendingManager {
     }
 
     private BookItem bookToLent(Long accountId, Long isbn) {
+
         for (BookItem book : bookItemCatalog.findByIsbn(isbn)) {
             if (lentBookInfoByRfidTag.get(book.getRfidTag()) == null &&
                     reservationManager.isReservedForThisAccount(accountId, book.getRfidTag())) {
                 return book;
             }
+        }
+        for (BookItem book : bookItemCatalog.findByIsbn(isbn)) {
             if (lentBookInfoByRfidTag.get(book.getRfidTag()) == null &&
                     reservationManager.isAllowed(book.getRfidTag())) {
                 return book;
@@ -86,7 +84,7 @@ public class BookLendingManager {
     }
 
     public LentBookInfo lend(Long accountId, Long isbn) {
-        reservationManager.cancelReservationIfOverDue();
+       reservationManager.cancelReservationIfOverDue();
         BookItem book = bookToLent(accountId, isbn);
         if (isAccountActive(accountId) &&
                 !hasOverDueBook(isbn) &&

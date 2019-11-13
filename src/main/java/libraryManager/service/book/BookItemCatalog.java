@@ -3,10 +3,7 @@ package libraryManager.service.book;
 import libraryManager.model.Book;
 import libraryManager.model.BookItem;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatalog, ISearchBookItemCatalog {
 
@@ -40,7 +37,7 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
     public List<Book> findBookByAuthor(String author) {
         List<Book> temp = new ArrayList<>();
         List<BookItem> foundBooks = findByAuthor(author);
-        if (foundBooks!=null) {
+        if (foundBooks != null) {
             for (BookItem book1 : foundBooks) {
                 if (temp.size() == 0) {
                     temp.add(book1);
@@ -52,14 +49,14 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
                 }
             }
             return temp;
-        }else return null;
+        } else return null;
     }
 
     @Override
     public List<Book> findBookByTitle(String title) {
         List<Book> temp = new ArrayList<>();
         List<BookItem> foundBooks = findByTitle(title);
-        if (foundBooks!=null) {
+        if (foundBooks != null) {
             for (BookItem book1 : foundBooks) {
                 if (temp.size() == 0) {
                     temp.add(book1);
@@ -71,15 +68,15 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
                 }
             }
             return temp;
-        }else return null;
+        } else return null;
 
     }
 
     @Override
     public Book findBookByIsbn(Long isbn) {
-        if(findByIsbn(isbn)!=null) {
+        if (findByIsbn(isbn) != null) {
             return findByIsbn(isbn).get(0);
-        }else return null;
+        } else return null;
     }
 
     private void addToBookItemsByIsbn(BookItem book) {
@@ -138,6 +135,13 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Set<String> getRfidTagsFromCatalog() {
+        Set<String> setOfRfidTags = new HashSet<>();
+        setOfRfidTags.addAll(bookItemsByRfidTag.keySet());
+        return setOfRfidTags;
     }
 
 }
