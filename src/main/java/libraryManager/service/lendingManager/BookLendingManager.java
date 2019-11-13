@@ -66,7 +66,11 @@ public class BookLendingManager {
     private BookItem bookToLent(Long accountId, Long isbn) {
         for (BookItem book : bookItemCatalog.findByIsbn(isbn)) {
             if (lentBookInfoByRfidTag.get(book.getRfidTag()) == null &&
-                    reservationManager.isAllowedOrReservedForThisAccount(accountId, book)) {
+                    reservationManager.isReservedForThisAccount(accountId, book.getRfidTag())) {
+                return book;
+            }
+            if (lentBookInfoByRfidTag.get(book.getRfidTag()) == null &&
+                    reservationManager.isAllowed(book.getRfidTag())) {
                 return book;
             }
         }
@@ -102,7 +106,7 @@ public class BookLendingManager {
             }
             list.add(lentBookInfo);
             lentBookInfoByAccountId.put(accountId, list);
-            reservationManager.removeFromReservationCatalog(book);
+            reservationManager.removeFromReservationCatalog(book.getRfidTag());
             return lentBookInfo;
         }
         throw new IllegalArgumentException();
@@ -119,7 +123,7 @@ public class BookLendingManager {
 
             LentBookInfo newInfo = lentBookInfoByRfidTag.remove(rfidTag);
             historyManager.add(accountId, transform(newInfo));
-            reservationManager.addToReservationCatalog(bookItemCatalog.findByRfidTag(rfidTag));
+            reservationManager.addToReservationCatalog(rfidTag);
 
             List<LentBookInfo> list = lentBookInfoByAccountId.get(accountId);
             for (LentBookInfo info : list) {

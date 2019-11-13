@@ -1,44 +1,37 @@
 package libraryManager.service.reservationManager;
 
+import com.sun.tools.javac.util.Pair;
 import libraryManager.model.BookItem;
 import libraryManager.model.ReservedBookInfo;
 import libraryManager.service.account.ISearchAccountCatalog;
 import libraryManager.service.book.ISearchBookItemCatalog;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 public class BookReservationManager {
     private ISearchAccountCatalog accountCatalog;
     private ISearchBookItemCatalog bookItemCatalog;
 
-    private Map<Long, List<BookItem>> allowedBookItemsByIsbn = new HashMap<>();
+    public BookReservationManager(ISearchAccountCatalog accountCatalog, ISearchBookItemCatalog bookItemCatalog) {
+        this.accountCatalog = accountCatalog;
+        this.bookItemCatalog = bookItemCatalog;
+    }
+
+    private Set<String> allowedBookItemsByRfidTag = new HashSet<>();
     private Map<String, ReservedBookInfo> reservedBookItemsByRfidTag = new HashMap<>();
     private Map<Long, List<ReservedBookInfo>> reservedBookItemsByAccountId = new HashMap<>();
 
 
-    public void addToReservationCatalog(BookItem book) {
-        List<BookItem> list = allowedBookItemsByIsbn.get(book.getBookIsbn());
-        if (list == null) {
-            list = new ArrayList<>();
-            allowedBookItemsByIsbn.put(book.getBookIsbn(), list);
-        }
-        list.add(book);
+    public void addToReservationCatalog(String rfidTag) {
+        allowedBookItemsByRfidTag.add(rfidTag);
     }
 
-    public Boolean removeFromReservationCatalog(BookItem book) {
-        if (bookItemCatalog.findByIsbn(book.getBookIsbn()) != null) {
-            List<BookItem> list = allowedBookItemsByIsbn.get(book.getBookIsbn());
-            for (BookItem bookItem : list) {
-                if (bookItem.getRfidTag().equals(book.getRfidTag())) {
-                    list.remove(book);
-                    return true;
-                }
-            }
+    public Boolean removeFromReservationCatalog(String rfidTag) {
+        if (bookItemCatalog.findByRfidTag(rfidTag) != null) {
+            return allowedBookItemsByRfidTag.remove(rfidTag);
         }
         return false;
     }
@@ -48,64 +41,69 @@ public class BookReservationManager {
         return (reservedBookItemsByAccountId.get(accountId) == null || reservedBookItemsByAccountId.get(accountId).size() < 4);
     }
 
-    public ReservedBookInfo reserve(Long accountId, Long isbn) {
-        List<BookItem> list = allowedBookItemsByIsbn.get(isbn);
-        if (list.size() != 0 && canReserveMoreBooks(accountId)) {
-            BookItem bookToReservation = list.get(0);
-            list.remove(bookToReservation);
+    public ReservedBookInfo reserve(Long accountId, String rfidTag) {
+
+        if (allowedBookItemsByRfidTag.contains(rfidTag) && canReserveMoreBooks(accountId)) {
+            allowedBookItemsByRfidTag.remove(rfidTag);
 
             LocalDate today = LocalDate.now();
             LocalDate dueDate = today.plusDays(30);
-            ReservedBookInfo info = new ReservedBookInfo(bookToReservation.getRfidTag(), accountId, today, dueDate);
-            reservedBookItemsByRfidTag.put(bookToReservation.getRfidTag(), info);
+            ReservedBookInfo info = new ReservedBookInfo(rfidTag, accountId, today, dueDate);
+            reservedBookItemsByRfidTag.put(rfidTag, info);
 
-            List<ReservedBookInfo> list2 = reservedBookItemsByAccountId.get(accountId);
-            if (list2 == null) {
-                list2 = new ArrayList<>();
-                reservedBookItemsByAccountId.put(accountId, list2);
+            List<ReservedBookInfo> list = reservedBookItemsByAccountId.get(accountId);
+            if (list == null) {
+                list = new ArrayList<>();
+                reservedBookItemsByAccountId.put(accountId, list);
             }
-            list2.add(info);
+            list.add(info);
             return info;
         }
         return null;
     }
 
-    public Boolean isAllowedOrReservedForThisAccount(Long accountId, BookItem book) {
+    public Boolean isReservedForThisAccount(Long accountId, String rfidTag) {
 
         for (ReservedBookInfo info : reservedBookItemsByAccountId.get(accountId)) {
-            if (info.getRfidTag().equals(book.getRfidTag())) {
+            if (info.getRfidTag().equals(rfidTag)) {
                 return true;
             }
         }
-        if (allowedBookItemsByIsbn.get(book.getBookIsbn()).contains(book)) {
+        return false;
+    }
+
+    public Boolean isAllowed(String rfidTag) {
+
+        if (allowedBookItemsByRfidTag.contains(rfidTag)) {
             return true;
         }
         return false;
     }
 
-
     public void cancelReservationIfOverDue() {
+
         for (Long id : reservedBookItemsByAccountId.keySet()) {
             for (List<ReservedBookInfo> list : reservedBookItemsByAccountId.values()) {
-
                 List<ReservedBookInfo> toBeRemoved = new ArrayList<>();
                 for (ReservedBookInfo info : list) {
                     if (info.getDueDate().isAfter(LocalDate.now())) {
-
                         toBeRemoved.add(info);
                     }
                 }
                 list.removeAll(toBeRemoved);
             }
         }
-
-        for (String rfidTag : reservedBookItemsByRfidTag.keySet()) {
-            for (ReservedBookInfo info : reservedBookItemsByRfidTag.values()) {
-                if (info.getDueDate().isAfter(LocalDate.now())) {
-                    addToReservationCatalog(bookItemCatalog.findByRfidTag(rfidTag));
-                    reservedBookItemsByRfidTag.remove(rfidTag);
-                }
+        Set<String> toBeRemoved = new HashSet<>();
+        for (Map.Entry<String, ReservedBookInfo> e : reservedBookItemsByRfidTag.entrySet()) {
+            if (e.getValue().getDueDate().isAfter(LocalDate.now())) {
+                toBeRemoved.add(e.getKey());
             }
         }
+        reservedBookItemsByRfidTag.keySet().removeAll(toBeRemoved);
+
+        allowedBookItemsByRfidTag.addAll(toBeRemoved);
     }
 }
+
+
+
