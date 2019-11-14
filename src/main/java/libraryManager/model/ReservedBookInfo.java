@@ -52,10 +52,10 @@ public class ReservedBookInfo {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LentBookInfo that = (LentBookInfo) o;
+        ReservedBookInfo that = (ReservedBookInfo) o;
         return getRfidTag().equals(that.getRfidTag()) &&
                 getBorrowerAccountId().equals(that.getBorrowerAccountId()) &&
-                getReservationDate().equals(that.getBorrowDate()) &&
+                getReservationDate().equals(that.getReservationDate()) &&
                 getDueDate().equals(that.getDueDate());
     }
 
