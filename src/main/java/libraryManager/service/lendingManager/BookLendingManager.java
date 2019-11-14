@@ -5,6 +5,7 @@ import libraryManager.model.BookItem;
 import libraryManager.model.LentBookInfo;
 import libraryManager.service.account.ISearchAccountCatalog;
 import libraryManager.service.book.ISearchBookItemCatalog;
+import libraryManager.service.historyManager.HistoryManager;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class BookLendingManager {
 
     private ISearchAccountCatalog accountCatalog;
     private ISearchBookItemCatalog bookItemCatalog;
+    private HistoryManager historyManager;
 
     private Map<Long, List<LentBookInfo>> lentBookInfoByAccountId = new HashMap<>();
     private Map<String, LentBookInfo> lentBookInfoByRfidTag = new HashMap<>();
@@ -23,6 +25,12 @@ public class BookLendingManager {
     public BookLendingManager(ISearchAccountCatalog accountCatalog, ISearchBookItemCatalog bookItemCatalog) {
         this.accountCatalog = accountCatalog;
         this.bookItemCatalog = bookItemCatalog;
+    }
+
+    public BookLendingManager(ISearchAccountCatalog accountCatalog, ISearchBookItemCatalog bookItemCatalog, HistoryManager historyManager) {
+        this.accountCatalog = accountCatalog;
+        this.bookItemCatalog = bookItemCatalog;
+        this.historyManager = historyManager;
     }
 
 
@@ -96,11 +104,17 @@ public class BookLendingManager {
         throw new IllegalArgumentException();
     }
 
+    public LentBookInfo transform (LentBookInfo info) {
+        info.setDueDate(LocalDate.now());
+        return info;
+    }
+
     public Boolean returnBook(Long accountId, String rfidTag) {
         if (bookItemCatalog.findByRfidTag(rfidTag) != null &&
                 lentBookInfoByRfidTag.get(rfidTag) != null) {
 
-            lentBookInfoByRfidTag.remove(rfidTag);
+            LentBookInfo newInfo = lentBookInfoByRfidTag.remove(rfidTag);
+            historyManager.add(accountId, transform(newInfo));
 
             List<LentBookInfo> list = lentBookInfoByAccountId.get(accountId);
             for (LentBookInfo info : list) {
