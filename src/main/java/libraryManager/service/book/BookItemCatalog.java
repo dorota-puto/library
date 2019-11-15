@@ -138,10 +138,10 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
     }
 
     @Override
-    public Set<String> getRfidTagsFromCatalog() {
-        Set<String> setOfRfidTags = new HashSet<>();
-        setOfRfidTags.addAll(bookItemsByRfidTag.keySet());
-        return setOfRfidTags;
+    public Set<String> getRfidTags() {
+        Set<String> rfidTags = new HashSet<>();
+        rfidTags.addAll(bookItemsByRfidTag.keySet());
+        return rfidTags;
     }
 
 }

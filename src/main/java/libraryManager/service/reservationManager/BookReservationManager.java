@@ -1,5 +1,6 @@
 package libraryManager.service.reservationManager;
 
+import libraryManager.model.BookItem;
 import libraryManager.model.ReservedBookInfo;
 import libraryManager.service.account.ISearchAccountCatalog;
 import libraryManager.service.book.ISearchBookItemCatalog;
@@ -11,6 +12,8 @@ import java.util.*;
 public class BookReservationManager {
     private ISearchAccountCatalog accountCatalog;
     private ISearchBookItemCatalog bookItemCatalog;
+    private static final int NUMBER_OF_BOOKS_POSSIBLE_TO_RESERVE = 4;
+    private static final int NUMBER_OF_DAYS_WHEN_RESERVATION_IS_KEPT = 30;
 
     Set<String> allowedRfidTags;
     Map<String, ReservedBookInfo> reservedBookInfosByRfidTag = new HashMap<>();
@@ -20,7 +23,7 @@ public class BookReservationManager {
     public BookReservationManager(ISearchAccountCatalog accountCatalog, ISearchBookItemCatalog bookItemCatalog) {
         this.accountCatalog = accountCatalog;
         this.bookItemCatalog = bookItemCatalog;
-        allowedRfidTags = bookItemCatalog.getRfidTagsFromCatalog();
+        allowedRfidTags = bookItemCatalog.getRfidTags();
 
     }
 
@@ -38,26 +41,27 @@ public class BookReservationManager {
 
 
     private Boolean canReserveMoreBooks(Long accountId) {
-        return (reservedBookInfosByAccountId.get(accountId) == null || reservedBookInfosByAccountId.get(accountId).size() < 4);
+        return (reservedBookInfosByAccountId.get(accountId) == null || reservedBookInfosByAccountId.get(accountId).size() < NUMBER_OF_BOOKS_POSSIBLE_TO_RESERVE);
     }
 
-    public ReservedBookInfo reserve(Long accountId, String rfidTag) {
+    public ReservedBookInfo reserve(Long accountId, Long isbn) {
+        for (BookItem book : bookItemCatalog.findByIsbn(isbn)) {
+            if (allowedRfidTags.contains(book.getRfidTag()) && canReserveMoreBooks(accountId)) {
+                allowedRfidTags.remove(book.getRfidTag());
 
-        if (allowedRfidTags.contains(rfidTag) && canReserveMoreBooks(accountId)) {
-            allowedRfidTags.remove(rfidTag);
+                LocalDate today = LocalDate.now();
+                LocalDate dueDate = today.plusDays(NUMBER_OF_DAYS_WHEN_RESERVATION_IS_KEPT);
+                ReservedBookInfo info = new ReservedBookInfo(book.getRfidTag(), accountId, today, dueDate);
+                reservedBookInfosByRfidTag.put(book.getRfidTag(), info);
 
-            LocalDate today = LocalDate.now();
-            LocalDate dueDate = today.plusDays(30);
-            ReservedBookInfo info = new ReservedBookInfo(rfidTag, accountId, today, dueDate);
-            reservedBookInfosByRfidTag.put(rfidTag, info);
-
-            List<ReservedBookInfo> list = reservedBookInfosByAccountId.get(accountId);
-            if (list == null) {
-                list = new ArrayList<>();
-                reservedBookInfosByAccountId.put(accountId, list);
+                List<ReservedBookInfo> list = reservedBookInfosByAccountId.get(accountId);
+                if (list == null) {
+                    list = new ArrayList<>();
+                    reservedBookInfosByAccountId.put(accountId, list);
+                }
+                list.add(info);
+                return info;
             }
-            list.add(info);
-            return info;
         }
         return null;
     }
@@ -74,23 +78,21 @@ public class BookReservationManager {
     }
 
     public Boolean isAllowed(String rfidTag) {
-        if (allowedRfidTags.contains(rfidTag)) {
-            return true;
-        }
-        return false;
+        return allowedRfidTags.contains(rfidTag);
     }
 
     public void cancelReservationIfOverDue() {
 
 
         for (Long id : reservedBookInfosByAccountId.keySet()) {
+            List<ReservedBookInfo> toBeRemoved = new ArrayList<>();
+
             for (ReservedBookInfo info : reservedBookInfosByAccountId.get(id)) {
-                List<ReservedBookInfo> toBeRemoved = new ArrayList<>();
                 if (info.getDueDate().isBefore(LocalDate.now())) {
                     toBeRemoved.add(info);
                 }
-                reservedBookInfosByAccountId.values().removeAll(toBeRemoved);
             }
+            reservedBookInfosByAccountId.get(id).removeAll(toBeRemoved);
         }
         Set<String> toBeRemoved = new HashSet<>();
         for (Map.Entry<String, ReservedBookInfo> e : reservedBookInfosByRfidTag.entrySet()) {

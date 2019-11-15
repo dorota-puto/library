@@ -8,6 +8,7 @@ import libraryManager.service.book.BookItemCatalog;
 import org.testng.annotations.Test;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -35,7 +36,7 @@ public class BookReservationManagerTest {
         BookItemCatalog bookItemCatalogMock = mock(BookItemCatalog.class);
         AccountCatalog accountCatalogMock = mock(AccountCatalog.class);
         BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
-        given(bookItemCatalogMock.getRfidTagsFromCatalog()).willReturn(new HashSet<>(Arrays.asList("aaa")));
+        given(bookItemCatalogMock.getRfidTags()).willReturn(new HashSet<>(Arrays.asList("aaa")));
         BookReservationManager reservationManager = new BookReservationManager(accountCatalogMock, bookItemCatalogMock);
 
         given(bookItemCatalogMock.findByRfidTag("aaa")).willReturn(book1);
@@ -51,12 +52,17 @@ public class BookReservationManagerTest {
         BookItemCatalog bookItemCatalogMock = mock(BookItemCatalog.class);
         AccountCatalog accountCatalogMock = mock(AccountCatalog.class);
 
-        given(bookItemCatalogMock.getRfidTagsFromCatalog()).willReturn(new HashSet<>(Arrays.asList("aaa")));
+        given(bookItemCatalogMock.getRfidTags()).willReturn(new HashSet<>(Arrays.asList("aaa","bbb")));
 
+        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
+        BookItem book2 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "bbb");
+
+        given(bookItemCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1, book2));
         BookReservationManager reservationManager = new BookReservationManager(accountCatalogMock, bookItemCatalogMock);
-        ReservedBookInfo expectedInfo = reservationManager.reserve(111L, "aaa");
+        ReservedBookInfo expectedInfo = new ReservedBookInfo("bbb", 111L, LocalDate.now(), LocalDate.now().plusDays(30));
         //when
-        ReservedBookInfo info = new ReservedBookInfo("aaa", 111L, LocalDate.now(), LocalDate.now().plusDays(30));
+        reservationManager.reserve(222L,1L);
+        ReservedBookInfo info = reservationManager.reserve(111L,1L);
         //then
         assertThat(expectedInfo).isEqualTo(info);
     }
@@ -67,12 +73,14 @@ public class BookReservationManagerTest {
         BookItemCatalog bookItemCatalogMock = mock(BookItemCatalog.class);
         AccountCatalog accountCatalogMock = mock(AccountCatalog.class);
 
-        given(bookItemCatalogMock.getRfidTagsFromCatalog()).willReturn(new HashSet<>(Arrays.asList("aaa")));
+        given(bookItemCatalogMock.getRfidTags()).willReturn(new HashSet<>(Arrays.asList("aaa")));
+        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
+        given(bookItemCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1));
 
         BookReservationManager reservationManager = new BookReservationManager(accountCatalogMock, bookItemCatalogMock);
         //when
-        reservationManager.reserve(111L, "aaa");
-        ReservedBookInfo expectedInfo = reservationManager.reserve(222L, "aaa");
+        reservationManager.reserve(111L, 1L);
+        ReservedBookInfo expectedInfo = reservationManager.reserve(222L, 1L);
 
         //then
         assertThat(expectedInfo).isEqualTo(null);
@@ -84,11 +92,14 @@ public class BookReservationManagerTest {
         BookItemCatalog bookItemCatalogMock = mock(BookItemCatalog.class);
         AccountCatalog accountCatalogMock = mock(AccountCatalog.class);
 
-        given(bookItemCatalogMock.getRfidTagsFromCatalog()).willReturn(new HashSet<>(Arrays.asList("aaa")));
+        given(bookItemCatalogMock.getRfidTags()).willReturn(new HashSet<>(Arrays.asList("aaa")));
+        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
+        given(bookItemCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1));
+
         BookReservationManager reservationManager = new BookReservationManager(accountCatalogMock, bookItemCatalogMock);
 
         //when
-        reservationManager.reserve(111L, "aaa");
+        reservationManager.reserve(111L, 1L);
         Boolean isReservedForThisAccount = reservationManager.isReservedForThisAccount(111L, "aaa");
 
         //then
@@ -102,7 +113,8 @@ public class BookReservationManagerTest {
         BookItemCatalog bookItemCatalogMock = mock(BookItemCatalog.class);
         AccountCatalog accountCatalogMock = mock(AccountCatalog.class);
 
-        given(bookItemCatalogMock.getRfidTagsFromCatalog()).willReturn(new HashSet<>(Arrays.asList("aaa")));
+
+        given(bookItemCatalogMock.getRfidTags()).willReturn(new HashSet<>(Arrays.asList("aaa")));
         BookReservationManager reservationManager = new BookReservationManager(accountCatalogMock, bookItemCatalogMock);
 
         //when
@@ -127,8 +139,8 @@ public class BookReservationManagerTest {
         reservationManager.reservedBookInfosByRfidTag.put("aaa",info1);
         reservationManager.reservedBookInfosByRfidTag.put("bbb",info2);
         reservationManager.reservedBookInfosByRfidTag.put("ccc",info3);
-        reservationManager.reservedBookInfosByAccountId.put(111L,Arrays.asList(info1,info2));
-        reservationManager.reservedBookInfosByAccountId.put(222L,Arrays.asList(info3));
+        reservationManager.reservedBookInfosByAccountId.put(111L,new ArrayList<>(Arrays.asList(info1,info2)));
+        reservationManager.reservedBookInfosByAccountId.put(222L,new ArrayList<>(Arrays.asList(info3)));
 
         //when
         reservationManager.cancelReservationIfOverDue();
@@ -137,5 +149,10 @@ public class BookReservationManagerTest {
         assertThat(reservationManager.isAllowed("aaa")).isEqualTo(false);
         assertThat(reservationManager.isAllowed("bbb")).isEqualTo(true);
         assertThat(reservationManager.isAllowed("ccc")).isEqualTo(true);
+        assertThat(reservationManager.reservedBookInfosByAccountId.get(111L)).isEqualTo(Arrays.asList(info1));
+        assertThat(reservationManager.reservedBookInfosByAccountId.get(222L)).isEmpty();
+        assertThat(reservationManager.reservedBookInfosByRfidTag.get("aaa")).isEqualTo(info1);
+        assertThat(reservationManager.reservedBookInfosByRfidTag.get("bbb")).isEqualTo(null);
+        assertThat(reservationManager.reservedBookInfosByRfidTag.get("ccc")).isEqualTo(null);
     }
 }

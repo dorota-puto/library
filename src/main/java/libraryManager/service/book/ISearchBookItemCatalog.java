@@ -10,5 +10,5 @@ public interface ISearchBookItemCatalog {
     List<BookItem> findByAuthor(String author);
     List<BookItem> findByIsbn(Long isbn);
     BookItem findByRfidTag(String rfidTag);
-    Set<String> getRfidTagsFromCatalog();
+    Set<String> getRfidTags();
 }

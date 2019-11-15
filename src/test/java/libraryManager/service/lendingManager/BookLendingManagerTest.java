@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.mockito.BDDMockito.given;
@@ -123,6 +124,32 @@ public class BookLendingManagerTest {
 
         //then
         assertThat(lentBookInfo2).isEqualTo(expectedLentBookInfo);
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void lendWhenHasOverDueBooksTest() {
+        //given
+        ISearchAccountCatalog accountCatalogMock = mock(ISearchAccountCatalog.class);
+        ISearchBookItemCatalog bookCatalogMock = mock(ISearchBookItemCatalog.class);
+        HistoryManager historyManagerMock = mock(HistoryManager.class);
+        BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
+
+        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
+        BookItem book2 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "bbb");
+
+        BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
+        given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1, book2));
+        given(reservationManagerMock.isAllowed("aaa")).willReturn(true);
+        given(reservationManagerMock.isReservedForThisAccount(111L, "aaa")).willReturn(false);
+        given(reservationManagerMock.isAllowed("bbb")).willReturn(true);
+        given(reservationManagerMock.isReservedForThisAccount(111L, "bbb")).willReturn(false);
+
+        LentBookInfo info = new LentBookInfo("aaa", 111L, LocalDate.of(2018, 12, 12), LocalDate.of(2018, 12, 12).plusDays(30));
+        bookLendingManager.lentBookInfoByAccountId.put(111L, new ArrayList<>(Arrays.asList(info)));
+
+        //when
+        bookLendingManager.lend(111L, 1L);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
