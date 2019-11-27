@@ -9,10 +9,8 @@ import libraryManager.service.historyManager.HistoryManager;
 import libraryManager.service.reservationManager.BookReservationManager;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BookLendingManager {
 
@@ -34,15 +32,13 @@ public class BookLendingManager {
     }
 
     private Boolean hasOverDueBook(Long accountId) {
-        if (lentBookInfoByAccountId.get(accountId) != null) {
-            for (LentBookInfo info : lentBookInfoByAccountId.get(accountId)) {
-                if (info.getDueDate().isBefore(LocalDate.now())) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return Optional.ofNullable(lentBookInfoByAccountId.get(accountId))
+                .map(lentBookInfos -> lentBookInfos.stream()
+                        .map(LentBookInfo::getDueDate)
+                        .anyMatch(date -> date.isBefore(LocalDate.now())))
+                .orElse(false);
     }
+
 
     public int checkBookAvailability(Long isbn) {
         List<BookItem> byIsbn = bookItemCatalog.findByIsbn(isbn);
@@ -53,20 +49,17 @@ public class BookLendingManager {
     }
 
     private BookItem bookToLent(Long accountId, Long isbn) {
+        List<BookItem> byIsbn = bookItemCatalog.findByIsbn(isbn);
 
-        for (BookItem book : bookItemCatalog.findByIsbn(isbn)) {
-            if (lentBookInfoByRfidTag.get(book.getRfidTag()) == null &&
-                    reservationManager.isReservedForThisAccount(accountId, book.getRfidTag())) {
-                return book;
-            }
-        }
-        for (BookItem book : bookItemCatalog.findByIsbn(isbn)) {
-            if (lentBookInfoByRfidTag.get(book.getRfidTag()) == null &&
-                    reservationManager.isAllowed(book.getRfidTag())) {
-                return book;
-            }
-        }
-        return null;
+        return bookItemCatalog.findByIsbn(isbn).stream()
+                .filter(book -> lentBookInfoByRfidTag.get(book.getRfidTag()) == null)
+                .filter(book -> reservationManager.isReservedForThisAccount(accountId, book.getRfidTag()))
+                .findAny()
+                .orElse(bookItemCatalog.findByIsbn(isbn).stream()
+                        .filter(book -> lentBookInfoByRfidTag.get(book.getRfidTag()) == null)
+                        .filter(book -> reservationManager.isAllowed(book.getRfidTag()))
+                        .findAny()
+                        .orElse(null));
     }
 
     private Boolean isAccountActive(Long accountId) {
@@ -117,13 +110,9 @@ public class BookLendingManager {
             historyManager.add(accountId, changeInfoWhenReturning(newInfo));
             reservationManager.addToReservationCatalog(rfidTag);
 
-            List<LentBookInfo> list = lentBookInfoByAccountId.get(accountId);
-            for (LentBookInfo info : list) {
-                if (info.getRfidTag().equals(rfidTag)) {
-                    list.remove(info);
-                    return true;
-                }
-            }
+            lentBookInfoByAccountId.get(accountId)
+                    .removeIf(info -> info.getRfidTag().equals(rfidTag));
+            return true;
         }
         return false;
     }

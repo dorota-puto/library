@@ -7,6 +7,8 @@ import libraryManager.service.book.ISearchBookItemCatalog;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 
 public class BookReservationManager {
@@ -54,11 +56,7 @@ public class BookReservationManager {
                 ReservedBookInfo info = new ReservedBookInfo(book.getRfidTag(), accountId, today, dueDate);
                 reservedBookInfosByRfidTag.put(book.getRfidTag(), info);
 
-                List<ReservedBookInfo> list = reservedBookInfosByAccountId.get(accountId);
-                if (list == null) {
-                    list = new ArrayList<>();
-                    reservedBookInfosByAccountId.put(accountId, list);
-                }
+                List<ReservedBookInfo> list = reservedBookInfosByAccountId.computeIfAbsent(accountId, k -> new ArrayList<>());
                 list.add(info);
                 return info;
             }
@@ -67,14 +65,10 @@ public class BookReservationManager {
     }
 
     public Boolean isReservedForThisAccount(Long accountId, String rfidTag) {
-        if (reservedBookInfosByAccountId.get(accountId) != null) {
-            for (ReservedBookInfo info : reservedBookInfosByAccountId.get(accountId)) {
-                if (info.getRfidTag().equals(rfidTag)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return Optional.ofNullable(reservedBookInfosByAccountId.get(accountId))
+                .map(reservedBookInfos -> reservedBookInfos.stream()
+                        .anyMatch(info -> info.getRfidTag().equals(rfidTag)))
+                .orElse(false);
     }
 
     public Boolean isAllowed(String rfidTag) {
@@ -83,25 +77,23 @@ public class BookReservationManager {
 
     public void cancelReservationIfOverDue() {
 
+        reservedBookInfosByAccountId = reservedBookInfosByAccountId.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        e -> e.getValue()
+                                .stream()
+                                .filter(info -> !info.getDueDate().isBefore(LocalDate.now()))
+                                .collect(Collectors.toList())));
 
-        for (Long id : reservedBookInfosByAccountId.keySet()) {
-            List<ReservedBookInfo> toBeRemoved = new ArrayList<>();
 
-            for (ReservedBookInfo info : reservedBookInfosByAccountId.get(id)) {
-                if (info.getDueDate().isBefore(LocalDate.now())) {
-                    toBeRemoved.add(info);
-                }
-            }
-            reservedBookInfosByAccountId.get(id).removeAll(toBeRemoved);
-        }
-        Set<String> toBeRemoved = new HashSet<>();
-        for (Map.Entry<String, ReservedBookInfo> e : reservedBookInfosByRfidTag.entrySet()) {
-            if (e.getValue().getDueDate().isBefore(LocalDate.now())) {
-                toBeRemoved.add(e.getKey());
-            }
-        }
+
+        Set<String> toBeRemoved = reservedBookInfosByRfidTag.entrySet()
+                .stream()
+                .filter(e -> e.getValue().getDueDate().isBefore(LocalDate.now()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+
         reservedBookInfosByRfidTag.keySet().removeAll(toBeRemoved);
-
         allowedRfidTags.addAll(toBeRemoved);
     }
 }
