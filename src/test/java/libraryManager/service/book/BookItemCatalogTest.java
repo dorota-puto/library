@@ -140,7 +140,7 @@ public class BookItemCatalogTest {
 
         //then
 
-        assertThat(bookItemCatalog.findBookByAuthor("Słowacki")).isEqualTo(null);
+        assertThat(bookItemCatalog.findBookByAuthor("Słowacki")).isEmpty();
     }
     @Test
     public void findBookByTitleTest(){
