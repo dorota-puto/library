@@ -17,11 +17,7 @@ public class HistoryManager {
     }
 
     public void add(Long accountId, LentBookInfo info) {
-        List<LentBookInfo> list = lentReturnedBookInfoByAccountId.get(accountId);
-        if (list == null) {
-            list = new ArrayList<>();
-            lentReturnedBookInfoByAccountId.put(accountId, list);
-        }
+        List<LentBookInfo> list = lentReturnedBookInfoByAccountId.computeIfAbsent(accountId, k -> new ArrayList<>());
         list.add(info);
     }
 }
