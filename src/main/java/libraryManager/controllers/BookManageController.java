@@ -1,7 +1,4 @@
-package libraryManager.service;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
+package libraryManager.controllers;
 
 import libraryManager.model.BookItem;
 import libraryManager.service.book.BookItemCatalog;
@@ -10,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.stream.events.EntityDeclaration;
+import java.util.List;
 
 @RestController
 public class BookManageController {
@@ -25,22 +22,21 @@ public class BookManageController {
     }
 
     @PostMapping("/library/bookitem")
-    ResponseEntity<BookItem> bookItem(@RequestBody BookItem newBookItem) {
+    ResponseEntity<Void> newBookItem(@RequestBody BookItem newBookItem) {
         if (bookItemCatalog.add(newBookItem)) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } else return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/library/bookitem/{rfidTag}")
     BookItem bookItem(@PathVariable String rfidTag) throws Exception {
-        if(bookItemCatalog.findByRfidTag(rfidTag)!=null) {
+        if (bookItemCatalog.findByRfidTag(rfidTag) != null) {
             return bookItemCatalog.findByRfidTag(rfidTag);
-        }
-             else throw new Exception();
+        } else throw new Exception();
     }
 
     @DeleteMapping("library/bookitem/{rfidTag}")
-    void deleteBookItem(@PathVariable String rfidTag){
+    void deleteBookItem(@PathVariable String rfidTag) {
         bookItemCatalog.remove(rfidTag);
     }
 }
