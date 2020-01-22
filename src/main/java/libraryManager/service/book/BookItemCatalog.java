@@ -38,6 +38,10 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
     }
 
 
+    public List<BookItem> listAll() {
+        return new ArrayList<>(bookItemsByRfidTag.values());
+    }
+
     public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));

@@ -17,6 +17,7 @@ public class BookReservationManager {
     private static final int NUMBER_OF_BOOKS_POSSIBLE_TO_RESERVE = 4;
     private static final int NUMBER_OF_DAYS_WHEN_RESERVATION_IS_KEPT = 30;
 
+    Set<String> allKnownRfidTags;
     Set<String> allowedRfidTags;
     Map<String, ReservedBookInfo> reservedBookInfosByRfidTag = new HashMap<>();
     Map<Long, List<ReservedBookInfo>> reservedBookInfosByAccountId = new HashMap<>();
@@ -25,10 +26,20 @@ public class BookReservationManager {
     public BookReservationManager(ISearchAccountCatalog accountCatalog, ISearchBookItemCatalog bookItemCatalog) {
         this.accountCatalog = accountCatalog;
         this.bookItemCatalog = bookItemCatalog;
-        allowedRfidTags = bookItemCatalog.getRfidTags();
-
+        this.allKnownRfidTags = bookItemCatalog.getRfidTags();
+        this.allowedRfidTags = bookItemCatalog.getRfidTags();
     }
 
+    private void synchronizeRfidTags(){
+        Set<String> newlyAddedRfidTags = bookItemCatalog.getRfidTags().stream()
+                .filter(rfidTag -> !allKnownRfidTags.contains(rfidTag))
+                .collect(Collectors.toSet());
+
+        allowedRfidTags.addAll(newlyAddedRfidTags);
+        allKnownRfidTags.addAll(newlyAddedRfidTags);
+
+        // TODO: sth similar for removing
+    }
 
     public void addToReservationCatalog(String rfidTag) {
         allowedRfidTags.add(rfidTag);
@@ -47,6 +58,7 @@ public class BookReservationManager {
     }
 
     public ReservedBookInfo reserve(Long accountId, Long isbn) {
+        synchronizeRfidTags();
         for (BookItem book : bookItemCatalog.findByIsbn(isbn)) {
             if (allowedRfidTags.contains(book.getRfidTag()) && canReserveMoreBooks(accountId)) {
                 allowedRfidTags.remove(book.getRfidTag());
@@ -72,6 +84,7 @@ public class BookReservationManager {
     }
 
     public Boolean isAllowed(String rfidTag) {
+        synchronizeRfidTags();
         return allowedRfidTags.contains(rfidTag);
     }
 

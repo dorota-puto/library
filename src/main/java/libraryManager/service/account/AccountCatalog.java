@@ -3,12 +3,18 @@ package libraryManager.service.account;
 import libraryManager.model.Account;
 import libraryManager.model.AccountState;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AccountCatalog implements ISearchAccountCatalog, IManageAccountCatalog {
 
     private Map<Long, Account> accountById = new HashMap<>();
+
+    public List<Account> listAll(){
+        return new ArrayList<>(accountById.values());
+    }
 
     @Override
     public Boolean add(Account account) {
