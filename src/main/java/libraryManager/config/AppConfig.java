@@ -5,6 +5,7 @@ import libraryManager.service.book.BookItemCatalog;
 import libraryManager.service.historyManager.HistoryManager;
 import libraryManager.service.lendingManager.BookLendingManager;
 import libraryManager.service.reservationManager.BookReservationManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
