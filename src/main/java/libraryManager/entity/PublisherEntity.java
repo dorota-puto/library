@@ -4,6 +4,11 @@ public class PublisherEntity {
     private Long publisherID;
     private String name;
 
+    public PublisherEntity(Long publisherID, String name){
+        this.publisherID=publisherID;
+        this.name=name;
+    }
+
     public Long getPublisherID() {
         return publisherID;
     }
