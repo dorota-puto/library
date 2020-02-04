@@ -1,5 +1,6 @@
 package libraryManager.service.book;
 
+import libraryManager.model.Author;
 import libraryManager.model.Book;
 import libraryManager.model.BookItem;
 
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatalog, ISearchBookItemCatalog {
 
     private Map<String, List<BookItem>> bookItemsByTitle = new HashMap<>();
-    private Map<String, List<BookItem>> bookItemsByAuthor = new HashMap<>();
+    private Map<Author, List<BookItem>> bookItemsByAuthor = new HashMap<>();
     private Map<Long, List<BookItem>> bookItemsByIsbn = new HashMap<>();
     private Map<String, BookItem> bookItemsByRfidTag = new HashMap<>();
 
@@ -23,7 +24,7 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
     }
 
     @Override
-    public List<BookItem> findByAuthor(String author) {
+    public List<BookItem> findByAuthor(Author author) {
         return bookItemsByAuthor.get(author);
     }
 
@@ -48,7 +49,7 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
     }
 
     @Override
-    public List<Book> findBookByAuthor(String author) {
+    public List<Book> findBookByAuthor(Author author) {
 
         return Optional.ofNullable(findByAuthor(author))
                 .map(bookItems -> bookItems.stream()

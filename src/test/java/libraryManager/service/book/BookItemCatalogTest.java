@@ -1,5 +1,6 @@
 package libraryManager.service.book;
 
+import libraryManager.model.Author;
 import libraryManager.model.BookItem;
 import libraryManager.model.Language;
 import org.testng.annotations.Test;
@@ -10,9 +11,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class BookItemCatalogTest {
 
-    BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
-    BookItem book2 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "bbb");
-    BookItem book3 = new BookItem(2L, "Pan Tadeusz", "Mickiewicz", "Zysk i Ska", 200, Language.POLISH, "ccc");
+    BookItem book1 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, Language.POLISH, "aaa");
+    BookItem book2 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, Language.POLISH, "bbb");
+    BookItem book3 = new BookItem(2L, "Pan Tadeusz", new Author("Adam","Mickiewicz"), "Zysk i Ska", 200, Language.POLISH, "ccc");
 
     @Test
     public void findBookItemByTitleTest() {
@@ -38,7 +39,7 @@ public class BookItemCatalogTest {
         bookItemCatalog.add(book2);
 
         //then
-        assertThat(bookItemCatalog.findByAuthor("Sienkiewicz")).isEqualTo(Arrays.asList(book1, book2));
+        assertThat(bookItemCatalog.findByAuthor(new Author("Henryk","Sienkiewicz"))).isEqualTo(Arrays.asList(book1, book2));
     }
 
     @Test
@@ -124,7 +125,7 @@ public class BookItemCatalogTest {
         bookItemCatalog.add(book3);
 
         //then
-        assertThat(bookItemCatalog.findBookByAuthor("Sienkiewicz")).isEqualTo(Arrays.asList(book1));
+        assertThat(bookItemCatalog.findBookByAuthor(new Author("Henryk","Sienkiewicz"))).isEqualTo(Arrays.asList(book1));
     }
 
     @Test
@@ -140,7 +141,7 @@ public class BookItemCatalogTest {
 
         //then
 
-        assertThat(bookItemCatalog.findBookByAuthor("Słowacki")).isEmpty();
+        assertThat(bookItemCatalog.findBookByAuthor(new Author("Juliusz","Słowacki"))).isEmpty();
     }
     @Test
     public void findBookByTitleTest(){
