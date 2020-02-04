@@ -1,11 +1,11 @@
 package libraryManager.config;
 
+import libraryManager.repository.jdbc.AccountRepository;
 import libraryManager.service.account.AccountCatalog;
 import libraryManager.service.book.BookItemCatalog;
 import libraryManager.service.historyManager.HistoryManager;
 import libraryManager.service.lendingManager.BookLendingManager;
 import libraryManager.service.reservationManager.BookReservationManager;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,8 +18,8 @@ public class AppConfig {
     }
 
     @Bean(name="accountCatalog")
-    public AccountCatalog accountCatalog(){
-        return new AccountCatalog();
+    public AccountCatalog accountCatalog(AccountRepository accountRepository){
+        return new AccountCatalog(accountRepository);
     }
 
     @Bean(name="bookLendingManager")

@@ -2,7 +2,7 @@ use library;
 
 
 
-CREATE TABLE IF NOT EXISTS Author (
+CREATE TABLE IF NOT EXISTS Author(
     author_ID INT NOT NULL,
     `name` VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,

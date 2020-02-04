@@ -1,16 +1,16 @@
 package libraryManager.entity;
 
 public class AuthorEntity {
-    private Integer authorID;
+    private Long authorID;
     private String name;
     private String lastName;
 
 
-    public Integer getAuthorID() {
+    public Long getAuthorID() {
         return authorID;
     }
 
-    public void setAuthorID(Integer authorID) {
+    public void setAuthorID(Long authorID) {
         this.authorID = authorID;
     }
 
