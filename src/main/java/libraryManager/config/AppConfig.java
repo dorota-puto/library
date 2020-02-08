@@ -1,6 +1,6 @@
 package libraryManager.config;
 
-import libraryManager.repository.jdbc.AccountRepository;
+import libraryManager.repository.AccountRepository;
 import libraryManager.service.account.AccountCatalog;
 import libraryManager.service.book.BookItemCatalog;
 import libraryManager.service.historyManager.HistoryManager;

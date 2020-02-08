@@ -1,6 +1,7 @@
 package libraryManager.repository.jdbc;
 
-import libraryManager.entity.AccountEntity;
+import libraryManager.entity.Account;
+import libraryManager.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -23,11 +24,11 @@ public class JdbcAccountRepository implements AccountRepository {
 
 
     @Override
-    public boolean save(AccountEntity accountEntity) {
+    public boolean save(Account account) {
         return jdbcTemplate.update(
                 "insert into Account (name, active) values(?,?)",
-                accountEntity.getName(),
-                accountEntity.getActive())>0;
+                account.getName(),
+                account.getActive())>0;
     }
 
 
@@ -41,11 +42,11 @@ public class JdbcAccountRepository implements AccountRepository {
 
 
     @Override
-    public List<AccountEntity> findAll() {
+    public List<Account> findAll() {
         return jdbcTemplate.query(
                 "select * from Account",
                 (rs, rowNum) ->
-                        new AccountEntity(
+                        new Account(
                                 rs.getLong("account_ID"),
                                 rs.getString("name"),
                                 rs.getBoolean("active")
@@ -53,12 +54,12 @@ public class JdbcAccountRepository implements AccountRepository {
     }
 
     @Override
-    public Optional<AccountEntity> findById(Long id) {
+    public Optional<Account> findById(Long id) {
         return jdbcTemplate.queryForObject(
                 "select * from Account where account_ID = ?",
                 new Object[]{id},
                 (rs, rowNum) ->
-                        Optional.of(new AccountEntity(
+                        Optional.of(new Account(
                                 rs.getLong("account_ID"),
                                 rs.getString("name"),
                                 rs.getBoolean("active")

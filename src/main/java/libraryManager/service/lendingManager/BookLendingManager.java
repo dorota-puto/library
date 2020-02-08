@@ -1,6 +1,5 @@
 package libraryManager.service.lendingManager;
 
-import libraryManager.model.AccountState;
 import libraryManager.model.BookItem;
 import libraryManager.model.LentBookInfo;
 import libraryManager.service.account.ISearchAccountCatalog;
@@ -10,7 +9,6 @@ import libraryManager.service.reservationManager.BookReservationManager;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class BookLendingManager {
 
@@ -63,7 +61,7 @@ public class BookLendingManager {
     }
 
     private Boolean isAccountActive(Long accountId) {
-        return accountCatalog.findById(accountId).getState().equals(AccountState.ACTIVE);
+        return accountCatalog.findById(accountId).getActive();
     }
 
     private Boolean canLendMoreBooks(Long accountId) {

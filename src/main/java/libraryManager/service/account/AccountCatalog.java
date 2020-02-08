@@ -1,15 +1,10 @@
 package libraryManager.service.account;
 
-import libraryManager.entity.AccountEntity;
-import libraryManager.model.Account;
-import libraryManager.model.AccountState;
-import libraryManager.repository.jdbc.AccountRepository;
-import libraryManager.repository.jdbc.JdbcAccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import libraryManager.entity.Account;
+import libraryManager.repository.AccountRepository;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
 
 public class AccountCatalog implements ISearchAccountCatalog, IManageAccountCatalog {
 
@@ -20,15 +15,12 @@ public class AccountCatalog implements ISearchAccountCatalog, IManageAccountCata
     }
 
     public List<Account> listAll() {
-        return accountRepository.findAll().stream()
-                .map(e -> new Account(e.getAccountID(), e.getName(), e.getActive() ? AccountState.ACTIVE : AccountState.SUSPENDED))
-                .collect(Collectors.toList());
+        return accountRepository.findAll();
     }
 
     @Override
     public Boolean add(Account account) {
-        AccountEntity accountEntity = new AccountEntity(account.getAccountName(), account.getState().equals(AccountState.ACTIVE));
-        return accountRepository.save(accountEntity);
+        return accountRepository.save(account);
     }
 
     @Override
@@ -43,7 +35,7 @@ public class AccountCatalog implements ISearchAccountCatalog, IManageAccountCata
 
     @Override
     public Account findById(Long id) {
-        Optional<AccountEntity> accountEntity = accountRepository.findById(id);
-        return accountEntity.map(entity -> new Account(id, entity.getName(), entity.getActive() ? AccountState.ACTIVE : AccountState.SUSPENDED)).orElse(null);
+        Optional<Account> accountEntity = accountRepository.findById(id);
+        return accountEntity.orElse(null);
     }
 }

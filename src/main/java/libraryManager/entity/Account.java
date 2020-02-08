@@ -1,17 +1,17 @@
 package libraryManager.entity;
 
-public class AccountEntity {
+public class Account {
 
     private Long accountID;
     private String name;
     private Boolean active;
 
-    public AccountEntity(String name, boolean active) {
+    public Account(String name, boolean active) {
         this.name=name;
         this.active=active;
     }
 
-    public AccountEntity(Long accountID, String name, boolean active) {
+    public Account(Long accountID, String name, boolean active) {
         this.accountID=accountID;
         this.name=name;
         this.active=active;
