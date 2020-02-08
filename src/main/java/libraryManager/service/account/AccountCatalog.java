@@ -3,10 +3,7 @@ package libraryManager.service.account;
 import libraryManager.entity.AccountEntity;
 import libraryManager.model.Account;
 import libraryManager.model.AccountState;
-import libraryManager.repository.jdbc.AccountRepository;
-import libraryManager.repository.jdbc.JdbcAccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import libraryManager.repository.AccountRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;

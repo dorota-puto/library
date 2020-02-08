@@ -1,7 +1,7 @@
 package libraryManager.repository.jdbc;
 
-import libraryManager.entity.AccountEntity;
 import libraryManager.entity.LanguageEntity;
+import libraryManager.repository.LanguageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

@@ -1,8 +1,11 @@
 package libraryManager.service.book;
 
+import libraryManager.entity.BookReadEntity;
 import libraryManager.model.Author;
 import libraryManager.model.Book;
 import libraryManager.model.BookItem;
+import libraryManager.model.Language;
+import libraryManager.repository.BookRepository;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,6 +14,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatalog, ISearchBookItemCatalog {
+
+    private BookRepository bookRepository;
+
+   public BookItemCatalog(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
 
     private Map<String, List<BookItem>> bookItemsByTitle = new HashMap<>();
     private Map<Author, List<BookItem>> bookItemsByAuthor = new HashMap<>();
@@ -42,6 +51,8 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
     public List<BookItem> listAll() {
         return new ArrayList<>(bookItemsByRfidTag.values());
     }
+
+
 
     public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
@@ -76,10 +87,20 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
 
     @Override
     public Book findBookByIsbn(Long isbn) {
-        if (findByIsbn(isbn) != null) {
-            return findByIsbn(isbn).get(0);
-        } else return null;
+        return null;
+       Optional<BookReadEntity> bookReadEntity = bookRepository.findByIsbn(isbn);
+       return bookReadEntity
+               .map(entity -> new Book(isbn,
+                       entity.getTitle(),
+                       new Author(entity.getAuthorFirstName(),entity.getAuthorLastName()),
+                       entity.getPublisherName(),
+                       entity.getPageCount(),
+                       entity.getLanguage()))
+               .orElse(null);
     }
+
+
+
 
     private void addToBookItemsByIsbn(BookItem book) {
         if (bookItemsByIsbn.containsKey(book.getBookIsbn())) {
@@ -125,6 +146,7 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
         }
         return false;
     }
+
 
     @Override
     public Boolean remove(String rfidTag) {

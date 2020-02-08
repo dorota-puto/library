@@ -1,6 +1,6 @@
 package libraryManager.model;
 
-public abstract class Book {
+public class Book {
     private Long bookIsbn;
     private String title;
     private Author author;

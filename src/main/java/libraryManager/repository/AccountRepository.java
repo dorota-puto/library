@@ -1,4 +1,4 @@
-package libraryManager.repository.jdbc;
+package libraryManager.repository;
 
 import libraryManager.entity.AccountEntity;
 

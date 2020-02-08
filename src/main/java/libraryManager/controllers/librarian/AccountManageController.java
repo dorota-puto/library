@@ -1,4 +1,4 @@
-package libraryManager.controllers;
+package libraryManager.controllers.librarian;
 
 import libraryManager.model.Account;
 import libraryManager.service.account.AccountCatalog;
@@ -28,7 +28,7 @@ public class AccountManageController {
     }
 
     @GetMapping("/library/account/{id}")
-    Account account(@PathVariable Long id) throws Exception {
+    Account findAccount (@PathVariable Long id) throws Exception {
         if (accountCatalog.findById(id) != null) {
             return accountCatalog.findById(id);
         } else throw new Exception();

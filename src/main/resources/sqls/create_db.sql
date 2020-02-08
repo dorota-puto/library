@@ -3,7 +3,7 @@ use library;
 
 
 CREATE TABLE IF NOT EXISTS Author(
-    author_ID INT NOT NULL,
+    author_ID INT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     PRIMARY KEY (author_ID)
@@ -11,14 +11,14 @@ CREATE TABLE IF NOT EXISTS Author(
 
 
 CREATE TABLE IF NOT EXISTS Publisher (
-    publisher_ID INT NOT NULL,
+    publisher_ID INT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
     PRIMARY KEY (publisher_ID)
 )  ENGINE=INNODB DEFAULT CHARSET=UTF8;
 
 
 CREATE TABLE IF NOT EXISTS `Language` (
-    language_ID INT NOT NULL,
+    language_ID INT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
     PRIMARY KEY (language_ID)
 )  ENGINE=INNODB DEFAULT CHARSET=UTF8;
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS Book_item (
 
 
 CREATE TABLE IF NOT EXISTS Account (
-    account_ID INT NOT NULL,
+    account_ID INT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
     active BIT NOT NULL,
     PRIMARY KEY (account_ID)
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS Account (
 
 
 CREATE TABLE IF NOT EXISTS Lent_book_info (
-    ID INT NOT NULL,
+    ID INT NOT NULL AUTO_INCREMENT,
     rfid_tag VARCHAR(255) NOT NULL,
     borrower_account_ID INT NOT NULL,
     borrow_date DATE NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS Lent_book_info (
 
 
 CREATE TABLE IF NOT EXISTS Reserved_book_info (
-    ID INT NOT NULL,
+    ID INT NOT NULL AUTO_INCREMENT,
     rfid_tag VARCHAR(255) NOT NULL,
     borrower_account_ID INT NOT NULL,
     reservation_date DATE NOT NULL,
