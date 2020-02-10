@@ -1,10 +1,14 @@
 package libraryManager.entity;
 
-public class LanguageEntity {
+public class Language {
     private Long languageID;
     private String name;
 
-    public LanguageEntity(Long languageID, String name){
+    public Language(String name){
+        this.name=name;
+    }
+
+    public Language(Long languageID, String name){
         this.languageID=languageID;
         this.name=name;
     }

@@ -1,10 +1,10 @@
 package libraryManager.entity;
 
-public class PublisherEntity {
+public class Publisher {
     private Long publisherID;
     private String name;
 
-    public PublisherEntity(Long publisherID, String name){
+    public Publisher(Long publisherID, String name){
         this.publisherID=publisherID;
         this.name=name;
     }

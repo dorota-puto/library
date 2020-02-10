@@ -1,13 +1,13 @@
 package libraryManager.repository;
 
-import libraryManager.entity.AuthorEntity;
+import libraryManager.entity.Author;
 
 import java.util.Optional;
 
 public interface AuthorRepository {
-    boolean save(AuthorEntity authorEntity);
+    boolean save(Author author);
 
-    Optional<AuthorEntity> findById(Long id);
+    Optional<Author> findById(Long id);
 
     int deleteById(Long id);
 }

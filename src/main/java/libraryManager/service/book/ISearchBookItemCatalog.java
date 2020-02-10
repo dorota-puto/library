@@ -1,6 +1,6 @@
 package libraryManager.service.book;
 
-import libraryManager.model.Author;
+import libraryManager.entity.Author;
 import libraryManager.model.BookItem;
 
 import java.util.List;

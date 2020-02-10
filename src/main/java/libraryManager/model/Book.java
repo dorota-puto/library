@@ -1,5 +1,8 @@
 package libraryManager.model;
 
+import libraryManager.entity.Author;
+import libraryManager.entity.Language;
+
 public abstract class Book {
     private Long bookIsbn;
     private String title;

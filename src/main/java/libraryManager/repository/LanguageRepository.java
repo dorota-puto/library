@@ -1,13 +1,13 @@
 package libraryManager.repository;
 
-import libraryManager.entity.LanguageEntity;
+import libraryManager.entity.Language;
 
 import java.util.Optional;
 
 public interface LanguageRepository {
-    boolean save(LanguageEntity languageEntity);
+    boolean save(Language language);
 
-    Optional<LanguageEntity> findById(Long id);
+    Optional<Language> findById(Long id);
 
     int deleteById(Long id);
 }

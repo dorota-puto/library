@@ -1,5 +1,8 @@
 package libraryManager.model;
 
+import libraryManager.entity.Author;
+import libraryManager.entity.Language;
+
 public class BookItem extends Book {
     private String rfidTag;
 
@@ -8,6 +11,8 @@ public class BookItem extends Book {
         super(bookIsbn, title, author, publisher, numberOfPages, language);
         this.rfidTag = rfidTag;
     }
+
+
 
     public String getRfidTag() {
         return rfidTag;

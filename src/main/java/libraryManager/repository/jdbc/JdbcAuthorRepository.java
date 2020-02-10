@@ -1,6 +1,6 @@
 package libraryManager.repository.jdbc;
 
-import libraryManager.entity.AuthorEntity;
+import libraryManager.entity.Author;
 import libraryManager.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,20 +15,20 @@ import java.util.Optional;
         private JdbcTemplate jdbcTemplate;
 
         @Override
-        public boolean save(AuthorEntity authorEntity) {
+        public boolean save(Author author) {
             return jdbcTemplate.update(
                     "insert into Author ( `name`, last_name) values(?,?)",
-                    authorEntity.getFirstName(),
-                    authorEntity.getLastName()) > 0;
+                    author.getFirstName(),
+                    author.getLastName()) > 0;
         }
 
         @Override
-        public Optional<AuthorEntity> findById(Long id) {
+        public Optional<Author> findById(Long id) {
             return jdbcTemplate.queryForObject(
                     "select * from Author where author_ID = ?",
                     new Object[]{id},
                     (rs, rowNum) ->
-                            Optional.of(new AuthorEntity(
+                            Optional.of(new Author(
                                     rs.getLong("author_ID"),
                                     rs.getString("name"),
                                     rs.getString("last_name")

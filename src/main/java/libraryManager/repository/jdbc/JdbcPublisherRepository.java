@@ -1,6 +1,6 @@
 package libraryManager.repository.jdbc;
 
-import libraryManager.entity.PublisherEntity;
+import libraryManager.entity.Publisher;
 import libraryManager.repository.PublisherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,19 +15,19 @@ public class JdbcPublisherRepository implements PublisherRepository {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public boolean save(PublisherEntity publisherEntity) {
+    public boolean save(Publisher publisher) {
         return jdbcTemplate.update(
                 "insert into Publisher ( name) values(?)",
-                publisherEntity.getName()) > 0;
+                publisher.getName()) > 0;
     }
 
     @Override
-    public Optional<PublisherEntity> findById(Long id) {
+    public Optional<Publisher> findById(Long id) {
         return jdbcTemplate.queryForObject(
                 "select * from Publisher where publisher_ID = ?",
                 new Object[]{id},
                 (rs, rowNum) ->
-                        Optional.of(new PublisherEntity(
+                        Optional.of(new Publisher(
                                 rs.getLong("publisher_ID"),
                                 rs.getString("name")
                         ))
