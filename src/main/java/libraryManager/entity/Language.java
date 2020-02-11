@@ -4,6 +4,8 @@ public class Language {
     private Long languageID;
     private String name;
 
+    public Language(){};
+
     public Language(String name){
         this.name=name;
     }

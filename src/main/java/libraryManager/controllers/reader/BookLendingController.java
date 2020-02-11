@@ -1,4 +1,4 @@
-package libraryManager.controllers;
+package libraryManager.controllers.reader;
 
 import libraryManager.dto.LendRequestDTO;
 import libraryManager.model.LentBookInfo;

@@ -1,4 +1,4 @@
-package libraryManager.controllers;
+package libraryManager.controllers.librarian;
 
 import libraryManager.model.BookItem;
 import libraryManager.service.book.BookItemCatalog;

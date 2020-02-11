@@ -4,9 +4,15 @@ public class Publisher {
     private Long publisherID;
     private String name;
 
+    public Publisher(){};
+
     public Publisher(Long publisherID, String name){
         this.publisherID=publisherID;
         this.name=name;
+    }
+
+    public Publisher(String name) {
+        this.name = name;
     }
 
     public Long getPublisherID() {

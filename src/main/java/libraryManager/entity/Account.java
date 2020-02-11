@@ -6,6 +6,7 @@ public class Account {
     private String name;
     private Boolean active;
 
+    public Account(){};
     public Account(String name, boolean active) {
         this.name=name;
         this.active=active;

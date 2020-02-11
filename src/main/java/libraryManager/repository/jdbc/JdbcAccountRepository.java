@@ -3,6 +3,7 @@ package libraryManager.repository.jdbc;
 import libraryManager.entity.Account;
 import libraryManager.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +29,7 @@ public class JdbcAccountRepository implements AccountRepository {
         return jdbcTemplate.update(
                 "insert into Account (name, active) values(?,?)",
                 account.getName(),
-                account.getActive())>0;
+                account.getActive()) > 0;
     }
 
 
@@ -36,8 +37,8 @@ public class JdbcAccountRepository implements AccountRepository {
     public boolean updateActive(Long accountID, boolean active) {
         return jdbcTemplate.update(
                 "update Account set active = ? where account_ID= ?",
-                active? 1:0,
-                accountID)>0;
+                active ? 1 : 0,
+                accountID) > 0;
     }
 
 
@@ -55,22 +56,26 @@ public class JdbcAccountRepository implements AccountRepository {
 
     @Override
     public Optional<Account> findById(Long id) {
-        return jdbcTemplate.queryForObject(
-                "select * from Account where account_ID = ?",
-                new Object[]{id},
-                (rs, rowNum) ->
-                        Optional.of(new Account(
-                                rs.getLong("account_ID"),
-                                rs.getString("name"),
-                                rs.getBoolean("active")
-                        ))
-        );
+        try {
+            return jdbcTemplate.queryForObject(
+                    "select * from Account where account_ID = ?",
+                    new Object[]{id},
+                    (rs, rowNum) ->
+                            Optional.of(new Account(
+                                    rs.getLong("account_ID"),
+                                    rs.getString("name"),
+                                    rs.getBoolean("active")
+                            ))
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public int deleteById(Long id) {
         return jdbcTemplate.update(
-                "delete Account where account_ID = ?",
+                "delete from Account where account_ID = ?",
                 id);
     }
 

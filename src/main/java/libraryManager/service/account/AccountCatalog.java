@@ -6,6 +6,8 @@ import libraryManager.repository.AccountRepository;
 import java.util.List;
 import java.util.Optional;
 
+
+//todo: remove me
 public class AccountCatalog implements ISearchAccountCatalog, IManageAccountCatalog {
 
     private AccountRepository accountRepository;
