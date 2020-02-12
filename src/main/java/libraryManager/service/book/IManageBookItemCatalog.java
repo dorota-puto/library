@@ -1,8 +1,8 @@
 package libraryManager.service.book;
 
-import libraryManager.model.BookItem;
+import libraryManager.model.BookItemDTO;
 
 public interface IManageBookItemCatalog {
     Boolean remove(String rfidTag);
-    Boolean add(BookItem bookItem);
+    Boolean add(BookItemDTO bookItem);
 }

@@ -3,7 +3,7 @@ package libraryManager.model;
 import libraryManager.entity.Author;
 import libraryManager.entity.Language;
 
-public abstract class Book {
+public abstract class BookDTO {
     private Long bookIsbn;
     private String title;
     private Author author;
@@ -11,7 +11,7 @@ public abstract class Book {
     private Integer numberOfPages;
     private Language language;
 
-    public Book(Long bookIsbn, String title, Author author, String publisher, Integer numberOfPages, Language language) {
+    public BookDTO(Long bookIsbn, String title, Author author, String publisher, Integer numberOfPages, Language language) {
         this.bookIsbn = bookIsbn;
         this.title = title;
         this.author = author;

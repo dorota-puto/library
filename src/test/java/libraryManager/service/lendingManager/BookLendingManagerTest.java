@@ -33,8 +33,8 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
-        BookItem book2 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
+        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        BookItemDTO book2 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
@@ -60,8 +60,8 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
-        BookItem book2 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
+        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        BookItemDTO book2 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
@@ -87,7 +87,7 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
@@ -107,8 +107,8 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
-        BookItem book2 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
+        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        BookItemDTO book2 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
@@ -137,8 +137,8 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
-        BookItem book2 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
+        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        BookItemDTO book2 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
@@ -163,11 +163,11 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book0 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
-        BookItem book1 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
-        BookItem book2 = new BookItem(2L, "Pan Tadeusz", new Author("Adam","Mickiewicz"), "Zysk i Ska", 200, new Language("polish"), "ccc");
-        BookItem book3 = new BookItem(3L, "Potop", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 200, new Language("polish"), "ddd");
-        BookItem book4 = new BookItem(4L, "Wesele", new Author("Stanisław","Wyspiański"), "Zysk i Ska", 200, new Language("polish"), "eee");
+        BookItemDTO book0 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
+        BookItemDTO book2 = new BookItemDTO(2L, "Pan Tadeusz", new Author("Adam","Mickiewicz"), "Zysk i Ska", 200, new Language("polish"), "ccc");
+        BookItemDTO book3 = new BookItemDTO(3L, "Potop", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 200, new Language("polish"), "ddd");
+        BookItemDTO book4 = new BookItemDTO(4L, "Wesele", new Author("Stanisław","Wyspiański"), "Zysk i Ska", 200, new Language("polish"), "eee");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
@@ -192,7 +192,7 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book2 = new BookItem(2L, "Pan Tadeusz", new Author("Adam","Mickiewicz"), "Zysk i Ska", 200, new Language("polish"), "ccc");
+        BookItemDTO book2 = new BookItemDTO(2L, "Pan Tadeusz", new Author("Adam","Mickiewicz"), "Zysk i Ska", 200, new Language("polish"), "ccc");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", false));
@@ -210,8 +210,8 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
-        BookItem book2 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
+        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        BookItemDTO book2 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
@@ -231,7 +231,7 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
@@ -256,7 +256,7 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
@@ -289,7 +289,7 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
@@ -311,9 +311,9 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book0 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
-        BookItem book1 = new BookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
-        BookItem book2 = new BookItem(2L, "Pan Tadeusz", new Author("Adam","Mickiewicz"), "Zysk i Ska", 200, new Language("polish"), "ccc");
+        BookItemDTO book0 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
+        BookItemDTO book2 = new BookItemDTO(2L, "Pan Tadeusz", new Author("Adam","Mickiewicz"), "Zysk i Ska", 200, new Language("polish"), "ccc");
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book0, book1));
 

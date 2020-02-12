@@ -1,6 +1,6 @@
 package libraryManager.service.lendingManager;
 
-import libraryManager.model.BookItem;
+import libraryManager.model.BookItemDTO;
 import libraryManager.model.LentBookInfo;
 import libraryManager.service.account.ISearchAccountCatalog;
 import libraryManager.service.book.ISearchBookItemCatalog;
@@ -39,15 +39,15 @@ public class BookLendingManager {
 
 
     public int checkBookAvailability(Long isbn) {
-        List<BookItem> byIsbn = bookItemCatalog.findByIsbn(isbn);
+        List<BookItemDTO> byIsbn = bookItemCatalog.findByIsbn(isbn);
         if (byIsbn != null) {
             return byIsbn.size();
         }
         return 0;
     }
 
-    private BookItem bookToLent(Long accountId, Long isbn) {
-        List<BookItem> byIsbn = bookItemCatalog.findByIsbn(isbn);
+    private BookItemDTO bookToLent(Long accountId, Long isbn) {
+        List<BookItemDTO> byIsbn = bookItemCatalog.findByIsbn(isbn);
 
         return bookItemCatalog.findByIsbn(isbn).stream()
                 .filter(book -> lentBookInfoByRfidTag.get(book.getRfidTag()) == null)
@@ -70,7 +70,7 @@ public class BookLendingManager {
 
     public LentBookInfo lend(Long accountId, Long isbn) {
         reservationManager.cancelReservationIfOverDue();
-        BookItem book = bookToLent(accountId, isbn);
+        BookItemDTO book = bookToLent(accountId, isbn);
         if (isAccountActive(accountId) &&
                 !hasOverDueBook(accountId) &&
                 checkBookAvailability(isbn) > 0 &&

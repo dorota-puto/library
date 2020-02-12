@@ -1,13 +1,12 @@
 package libraryManager.service.reservationManager;
 
-import libraryManager.model.BookItem;
+import libraryManager.model.BookItemDTO;
 import libraryManager.model.ReservedBookInfo;
 import libraryManager.service.account.ISearchAccountCatalog;
 import libraryManager.service.book.ISearchBookItemCatalog;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 
@@ -59,7 +58,7 @@ public class BookReservationManager {
 
     public ReservedBookInfo reserve(Long accountId, Long isbn) {
         synchronizeRfidTags();
-        for (BookItem book : bookItemCatalog.findByIsbn(isbn)) {
+        for (BookItemDTO book : bookItemCatalog.findByIsbn(isbn)) {
             if (allowedRfidTags.contains(book.getRfidTag()) && canReserveMoreBooks(accountId)) {
                 allowedRfidTags.remove(book.getRfidTag());
 
