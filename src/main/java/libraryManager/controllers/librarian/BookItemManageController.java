@@ -1,7 +1,7 @@
 package libraryManager.controllers.librarian;
 
-import libraryManager.model.BookItemDTO;
-import libraryManager.service.book.BookItemCatalog;
+import libraryManager.entity.BookItem;
+import libraryManager.repository.BookItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,30 +13,29 @@ import java.util.List;
 public class BookItemManageController {
 
     @Autowired
-    private BookItemCatalog bookItemCatalog;
+    private BookItemRepository bookItemRepository;
 
-    @CrossOrigin
-    @GetMapping("/library/bookitems")
-    List<BookItemDTO> all() {
-        return bookItemCatalog.listAll();
-    }
-
-    @PostMapping("/library/bookitem")
-    ResponseEntity<Void> newBookItem(@RequestBody BookItemDTO newBookItem) {
-        if (bookItemCatalog.add(newBookItem)) {
+    @PostMapping("/library/bookItem")
+    ResponseEntity<Void> newBookItem(@RequestBody BookItem bookItem) {
+        if (bookItemRepository.save(bookItem)) {
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @GetMapping("/library/bookitem/{rfidTag}")
-    BookItemDTO bookItem(@PathVariable String rfidTag) throws Exception {
-        if (bookItemCatalog.findByRfidTag(rfidTag) != null) {
-            return bookItemCatalog.findByRfidTag(rfidTag);
-        } else throw new Exception();
+    @GetMapping("/library/bookItems")
+    List<BookItem> all() {return bookItemRepository.findAll();}
+
+
+    @GetMapping("/library/bookItem/{rfidTag}")
+    ResponseEntity<BookItem> bookItem(@PathVariable String rfidTag) {
+        return bookItemRepository.findByRfidTag(rfidTag)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("library/bookitem/{rfidTag}")
+    @DeleteMapping("library/bookItem/{rfidTag}")
     void deleteBookItem(@PathVariable String rfidTag) {
-        bookItemCatalog.remove(rfidTag);
+        bookItemRepository.deleteByRfidTag(rfidTag);
     }
+
 }

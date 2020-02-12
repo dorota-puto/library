@@ -1,8 +1,15 @@
 package libraryManager.entity;
 
-public class BookItemEntity {
+public class BookItem {
     private String rfidTag;
-    private Integer isbn;
+    private Long isbn;
+
+    public BookItem() {}
+
+    public BookItem(String rfidTag, Long isbn) {
+        this.rfidTag = rfidTag;
+        this.isbn = isbn;
+    }
 
     public String getRfidTag() {
         return rfidTag;
@@ -12,11 +19,11 @@ public class BookItemEntity {
         this.rfidTag = rfidTag;
     }
 
-    public Integer getIsbn() {
+    public Long getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(Integer isbn) {
+    public void setIsbn(Long isbn) {
         this.isbn = isbn;
     }
 }
