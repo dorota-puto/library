@@ -1,6 +1,6 @@
 package libraryManager.service.reservationManager;
 
-import libraryManager.model.BookItemDTO;
+import libraryManager.entity.full.FullBookItem;
 import libraryManager.model.ReservedBookInfo;
 import libraryManager.service.account.ISearchAccountCatalog;
 import libraryManager.service.book.ISearchBookItemCatalog;
@@ -58,7 +58,7 @@ public class BookReservationManager {
 
     public ReservedBookInfo reserve(Long accountId, Long isbn) {
         synchronizeRfidTags();
-        for (BookItemDTO book : bookItemCatalog.findByIsbn(isbn)) {
+        for (FullBookItem book : bookItemCatalog.findByIsbn(isbn)) {
             if (allowedRfidTags.contains(book.getRfidTag()) && canReserveMoreBooks(accountId)) {
                 allowedRfidTags.remove(book.getRfidTag());
 

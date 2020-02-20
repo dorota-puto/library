@@ -2,7 +2,7 @@ package libraryManager.service.reservationManager;
 
 import libraryManager.entity.Author;
 import libraryManager.entity.Language;
-import libraryManager.model.BookItemDTO;
+import libraryManager.entity.full.FullBookItem;
 import libraryManager.model.ReservedBookInfo;
 import libraryManager.service.account.AccountCatalog;
 import libraryManager.service.book.BookItemCatalog;
@@ -36,7 +36,7 @@ public class BookReservationManagerTest {
         //given
         BookItemCatalog bookItemCatalogMock = mock(BookItemCatalog.class);
         AccountCatalog accountCatalogMock = mock(AccountCatalog.class);
-        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
         given(bookItemCatalogMock.getRfidTags()).willReturn(new HashSet<>(Arrays.asList("aaa")));
         BookReservationManager reservationManager = new BookReservationManager(accountCatalogMock, bookItemCatalogMock);
 
@@ -55,8 +55,8 @@ public class BookReservationManagerTest {
 
         given(bookItemCatalogMock.getRfidTags()).willReturn(new HashSet<>(Arrays.asList("aaa","bbb")));
 
-        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
-        BookItemDTO book2 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        FullBookItem book2 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
 
         given(bookItemCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1, book2));
         BookReservationManager reservationManager = new BookReservationManager(accountCatalogMock, bookItemCatalogMock);
@@ -75,7 +75,7 @@ public class BookReservationManagerTest {
         AccountCatalog accountCatalogMock = mock(AccountCatalog.class);
 
         given(bookItemCatalogMock.getRfidTags()).willReturn(new HashSet<>(Arrays.asList("aaa")));
-        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
         given(bookItemCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1));
 
         BookReservationManager reservationManager = new BookReservationManager(accountCatalogMock, bookItemCatalogMock);
@@ -94,7 +94,7 @@ public class BookReservationManagerTest {
         AccountCatalog accountCatalogMock = mock(AccountCatalog.class);
 
         given(bookItemCatalogMock.getRfidTags()).willReturn(new HashSet<>(Arrays.asList("aaa")));
-        BookItemDTO book1 = new BookItemDTO(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
         given(bookItemCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1));
 
         BookReservationManager reservationManager = new BookReservationManager(accountCatalogMock, bookItemCatalogMock);

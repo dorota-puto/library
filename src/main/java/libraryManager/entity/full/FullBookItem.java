@@ -1,13 +1,13 @@
-package libraryManager.model;
+package libraryManager.entity.full;
 
 import libraryManager.entity.Author;
 import libraryManager.entity.Language;
 
-public class BookItemDTO extends BookDTO {
+public class FullBookItem extends FullBook {
     private String rfidTag;
 
     // todo: use builder pattern
-    public BookItemDTO(Long bookIsbn, String title, Author author, String publisher, Integer numberOfPages, Language language, String rfidTag) {
+    public FullBookItem(Long bookIsbn, String title, Author author, String publisher, Integer numberOfPages, Language language, String rfidTag) {
         super(bookIsbn, title, author, publisher, numberOfPages, language);
         this.rfidTag = rfidTag;
     }

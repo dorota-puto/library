@@ -57,6 +57,4 @@ public class JdbcBookItemRepository implements libraryManager.repository.BookIte
                 "delete from Book_item where  rfid_tag = ?",
                 rfidTag);
     }
-
-
 }
