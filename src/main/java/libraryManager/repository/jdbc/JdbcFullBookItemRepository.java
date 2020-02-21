@@ -4,11 +4,13 @@ import libraryManager.entity.Author;
 import libraryManager.entity.Language;
 import libraryManager.entity.full.FullBookItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -23,18 +25,18 @@ public class JdbcFullBookItemRepository implements libraryManager.repository.Ful
                 "select * from Book " +
                         "inner join Author on Book.author_ID= Author.author_ID " +
                         "inner join Publisher on Book.publisher_ID=Publisher.publisher_ID " +
-                        "inner join Language on Book.language_ID=Language.language_ID" +
-                        "inner join Book_item in Book.isbn=Book_item.isbn " +
-                        "where title=?",
+                        "inner join Language on Book.language_ID=Language.language_ID " +
+                        "inner join Book_item on Book.isbn=Book_item.isbn " +
+                        "where Book.title=?",
                 new Object[]{title},
                 (rs, rowNum) ->
                         new FullBookItem(
                                 rs.getLong("isbn"),
                                 rs.getString("title"),
-                                new Author( rs.getString("Author.name"), rs.getString("Author.last_name")),
+                                new Author(rs.getLong("Author.author_ID"),  rs.getString("Author.name"), rs.getString("Author.last_name")),
                                 rs.getString("Publisher.name"),
                                 rs.getInt("page_count"),
-                                new Language(rs.getString("Language.name")),
+                                new Language( rs.getLong("Language.language_ID"), rs.getString("Language.name")),
                                 rs.getString("Book_item.rfid_tag")
                         ));
     }
@@ -45,8 +47,8 @@ public class JdbcFullBookItemRepository implements libraryManager.repository.Ful
                 "select * from Book " +
                         "inner join Author on Book.author_ID= Author.author_ID " +
                         "inner join Publisher on Book.publisher_ID=Publisher.publisher_ID " +
-                        "inner join Language on Book.language_ID=Language.language_ID" +
-                        "inner join Book_item in Book.isbn=Book_item.isbn " +
+                        "inner join Language on Book.language_ID=Language.language_ID " +
+                        "inner join Book_item on Book.isbn=Book_item.isbn " +
                         "where Author.name=? and Author.last_name=?",
                 new Object[]{name,surname},
 
@@ -54,10 +56,10 @@ public class JdbcFullBookItemRepository implements libraryManager.repository.Ful
                         new FullBookItem(
                                 rs.getLong("isbn"),
                                 rs.getString("title"),
-                                new Author( rs.getString("Author.name"), rs.getString("Author.last_name")),
+                                new Author(rs.getLong("Author.author_ID"),  rs.getString("Author.name"), rs.getString("Author.last_name")),
                                 rs.getString("Publisher.name"),
                                 rs.getInt("page_count"),
-                                new Language(rs.getString("Language.name")),
+                                new Language( rs.getLong("Language.language_ID"), rs.getString("Language.name")),
                                 rs.getString("Book_item.rfid_tag")
                         ));
     }
@@ -68,42 +70,47 @@ public class JdbcFullBookItemRepository implements libraryManager.repository.Ful
                 "select * from Book " +
                         "inner join Author on Book.author_ID= Author.author_ID " +
                         "inner join Publisher on Book.publisher_ID=Publisher.publisher_ID " +
-                        "inner join Language on Book.language_ID=Language.language_ID" +
-                        "inner join Book_item in Book.isbn=Book_item.isbn " +
-                        "where isbn=?",
+                        "inner join Language on Book.language_ID=Language.language_ID " +
+                        "inner join Book_item on Book.isbn=Book_item.isbn " +
+                        "where Book_item.isbn=?",
                 new Object[]{isbn},
                 (rs, rowNum) ->
                         new FullBookItem(
                                 rs.getLong("isbn"),
                                 rs.getString("title"),
-                                new Author( rs.getString("Author.name"), rs.getString("Author.last_name")),
+                                new Author( rs.getLong("Author.author_ID"), rs.getString("Author.name"), rs.getString("Author.last_name")),
                                 rs.getString("Publisher.name"),
                                 rs.getInt("page_count"),
-                                new Language(rs.getString("Language.name")),
+                                new Language( rs.getLong("Language.language_ID"), rs.getString("Language.name")),
                                 rs.getString("Book_item.rfid_tag")
                         ));
     }
 
     @Override
-    public FullBookItem findByRfidTag(String rfidTag){
-        return jdbcTemplate.queryForObject(
-                "select * from Book " +
-                        "inner join Author on Book.author_ID= Author.author_ID " +
-                        "inner join Publisher on Book.publisher_ID=Publisher.publisher_ID " +
-                        "inner join Language on Book.language_ID=Language.language_ID" +
-                        "inner join Book_item in Book.isbn=Book_item.isbn " +
-                        "where rfid_tag=?",
-                new Object[]{rfidTag},
-                (rs, rowNum) ->
-                        new FullBookItem(
-                                rs.getLong("isbn"),
-                                rs.getString("title"),
-                                new Author( rs.getString("Author.name"), rs.getString("Author.last_name")),
-                                rs.getString("Publisher.name"),
-                                rs.getInt("page_count"),
-                                new Language(rs.getString("Language.name")),
-                                rs.getString("Book_item.rfid_tag")
-                        ));
+    public Optional<FullBookItem> findByRfidTag(String rfidTag){
+        try {
+            return jdbcTemplate.queryForObject(
+                    "select * from Book " +
+                            "inner join Author on Book.author_ID= Author.author_ID " +
+                            "inner join Publisher on Book.publisher_ID=Publisher.publisher_ID " +
+                            "inner join Language on Book.language_ID=Language.language_ID " +
+                            "inner join Book_item on Book.isbn=Book_item.isbn " +
+                            "where Book_item.rfid_tag=?",
+                    new Object[]{rfidTag},
+                    (rs, rowNum) ->
+                            Optional.of(   new FullBookItem(
+                                    rs.getLong("isbn"),
+                                    rs.getString("title"),
+                                    new Author(rs.getLong("Author.author_ID"), rs.getString("Author.name"), rs.getString("Author.last_name")),
+                                    rs.getString("Publisher.name"),
+                                    rs.getInt("page_count"),
+                                    new Language( rs.getLong("Language.language_ID"), rs.getString("Language.name")),
+                                    rs.getString("Book_item.rfid_tag")
+                                    )
+                            ));
+        }catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -112,17 +119,17 @@ public class JdbcFullBookItemRepository implements libraryManager.repository.Ful
                 "select * from Book " +
                         "inner join Author on Book.author_ID= Author.author_ID " +
                         "inner join Publisher on Book.publisher_ID=Publisher.publisher_ID " +
-                        "inner join Language on Book.language_ID=Language.language_ID" +
-                        "inner join Book_item in Book.isbn=Book_item.isbn ",
+                        "inner join Language on Book.language_ID=Language.language_ID " +
+                        "inner join Book_item on Book.isbn=Book_item.isbn ",
 
                 (rs, rowNum) ->
                         new FullBookItem(
                                 rs.getLong("isbn"),
                                 rs.getString("title"),
-                                new Author( rs.getString("Author.name"), rs.getString("Author.last_name")),
+                                new Author( rs.getLong("Author.author_ID"), rs.getString("Author.name"), rs.getString("Author.last_name")),
                                 rs.getString("Publisher.name"),
                                 rs.getInt("page_count"),
-                                new Language(rs.getString("Language.name")),
+                                new Language( rs.getLong("Language.language_ID"), rs.getString("Language.name")),
                                 rs.getString("Book_item.rfid_tag")
                         ));
     }

@@ -3,6 +3,7 @@ package libraryManager.repository;
 import libraryManager.entity.full.FullBookItem;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface FullBookItemRepository {
@@ -12,7 +13,7 @@ public interface FullBookItemRepository {
 
     List<FullBookItem> findByIsbn(Long isbn);
 
-    FullBookItem findByRfidTag(String rfidTag);
+    Optional<FullBookItem> findByRfidTag(String rfidTag);
 
     List<FullBookItem> listAll();
 

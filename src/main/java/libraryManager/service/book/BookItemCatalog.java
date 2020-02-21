@@ -43,7 +43,7 @@ public class BookItemCatalog implements ISearchBookCatalog, ISearchBookItemCatal
 
     @Override
     public FullBookItem findByRfidTag(String rfid) {
-        return fullBookItemRepository.findByRfidTag(rfid);
+        return fullBookItemRepository.findByRfidTag(rfid).orElse(null);
     }
 
 
