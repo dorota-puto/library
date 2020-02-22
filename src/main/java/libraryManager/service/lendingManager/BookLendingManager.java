@@ -49,11 +49,11 @@ public class BookLendingManager {
     private FullBookItem bookToLent(Long accountId, Long isbn) {
         List<FullBookItem> byIsbn = bookItemCatalog.findByIsbn(isbn);
 
-        return bookItemCatalog.findByIsbn(isbn).stream()
+        return byIsbn.stream()
                 .filter(book -> lentBookInfoByRfidTag.get(book.getRfidTag()) == null)
                 .filter(book -> reservationManager.isReservedForThisAccount(accountId, book.getRfidTag()))
                 .findAny()
-                .orElse(bookItemCatalog.findByIsbn(isbn).stream()
+                .orElse(byIsbn.stream()
                         .filter(book -> lentBookInfoByRfidTag.get(book.getRfidTag()) == null)
                         .filter(book -> reservationManager.isAllowed(book.getRfidTag()))
                         .findAny()
