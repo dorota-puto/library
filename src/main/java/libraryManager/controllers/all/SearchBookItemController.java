@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/library/search/bookitem")
-public class FullBookItemController {
+public class SearchBookItemController {
 
     @Autowired
     private BookItemCatalog bookItemCatalog;
