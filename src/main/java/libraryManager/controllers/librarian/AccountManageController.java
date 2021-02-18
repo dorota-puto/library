@@ -1,7 +1,7 @@
-package libraryManager.controllers;
+package libraryManager.controllers.librarian;
 
-import libraryManager.model.Account;
-import libraryManager.service.account.AccountCatalog;
+import libraryManager.entity.Account;
+import libraryManager.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,38 +13,43 @@ import java.util.List;
 public class AccountManageController {
 
     @Autowired
-    private AccountCatalog accountCatalog;
+    private AccountRepository accountRepository;
 
     @PostMapping("/library/account")
     ResponseEntity<Void> newAccount(@RequestBody Account newAccount) {
-        if (accountCatalog.add(newAccount)) {
+        if (accountRepository.save(newAccount)) {
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/library/accounts")
     List<Account> all() {
-        return accountCatalog.listAll();
+        return accountRepository.findAll();
     }
 
     @GetMapping("/library/account/{id}")
-    Account account(@PathVariable Long id) throws Exception {
-        if (accountCatalog.findById(id) != null) {
-            return accountCatalog.findById(id);
-        } else throw new Exception();
+    ResponseEntity<Account> account(@PathVariable Long id) {
+        return accountRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/library/account/{id}/suspend")
-    ResponseEntity<Void> suspend(@PathVariable Long id) throws Exception {
-        if (accountCatalog.suspend(id)) {
+    ResponseEntity<Void> suspend(@PathVariable Long id) {
+        if (accountRepository.updateActive(id,false)) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PutMapping("/library/account/{id}/unsuspend")
-    ResponseEntity<Void> unSuspend(@PathVariable Long id) throws Exception {
-        if (accountCatalog.unSuspend(id)) {
+    ResponseEntity<Void> unSuspend(@PathVariable Long id) {
+        if (accountRepository.updateActive(id, true)) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @DeleteMapping("/library/account/{id}")
+    void deleteAccount(@PathVariable Long id){
+        accountRepository.deleteById(id);
     }
 }

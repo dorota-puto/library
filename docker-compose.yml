@@ -1,0 +1,11 @@
+database:
+  image: mysql:5.6
+  volumes:
+    - dbdata:/var/leib/mysql
+  environment:
+    - "MYSQL_DATABASE=library"
+    - "MYSQL_USER=library"
+    - "MYSQL_PASSWORD=ala123"
+    - "MYSQL_ROOT_PASSWORD=ala123"
+  ports:
+    - "33061:3306"

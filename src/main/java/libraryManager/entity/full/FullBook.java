@@ -1,14 +1,17 @@
-package libraryManager.model;
+package libraryManager.entity.full;
 
-public abstract class Book {
+import libraryManager.entity.Author;
+import libraryManager.entity.Language;
+
+public abstract class FullBook {
     private Long bookIsbn;
     private String title;
-    private String author;
+    private Author author;
     private String publisher;
     private Integer numberOfPages;
     private Language language;
 
-    public Book(Long bookIsbn, String title, String author, String publisher, Integer numberOfPages, Language language) {
+    public FullBook(Long bookIsbn, String title, Author author, String publisher, Integer numberOfPages, Language language) {
         this.bookIsbn = bookIsbn;
         this.title = title;
         this.author = author;
@@ -33,11 +36,11 @@ public abstract class Book {
         this.title = title;
     }
 
-    public String getAuthor() {
+    public Author getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(Author author) {
         this.author = author;
     }
 

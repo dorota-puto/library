@@ -1,7 +1,9 @@
 package libraryManager.service.book;
 
-import libraryManager.model.Book;
-import libraryManager.model.BookItem;
+import libraryManager.entity.full.FullBook;
+import libraryManager.entity.full.FullBookItem;
+import libraryManager.repository.BookRepository;
+import libraryManager.repository.FullBookItemRepository;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,37 +11,44 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatalog, ISearchBookItemCatalog {
+public class BookItemCatalog implements ISearchBookCatalog, ISearchBookItemCatalog {
 
-    private Map<String, List<BookItem>> bookItemsByTitle = new HashMap<>();
-    private Map<String, List<BookItem>> bookItemsByAuthor = new HashMap<>();
-    private Map<Long, List<BookItem>> bookItemsByIsbn = new HashMap<>();
-    private Map<String, BookItem> bookItemsByRfidTag = new HashMap<>();
+//    private Map<String, List<BookItemDTO>> bookItemsByTitle = new HashMap<>();
+//    private Map<Author, List<BookItemDTO>> bookItemsByAuthor = new HashMap<>();
+//    private Map<Long, List<BookItemDTO>> bookItemsByIsbn = new HashMap<>();
+//    private Map<String, BookItemDTO> bookItemsByRfidTag = new HashMap<>();
 
+    private FullBookItemRepository fullBookItemRepository;
+    private BookRepository bookRepository;
 
-    @Override
-    public List<BookItem> findByTitle(String title) {
-        return bookItemsByTitle.get(title);
+    public BookItemCatalog(FullBookItemRepository fullBookItemRepository, BookRepository bookRepository) {
+        this.fullBookItemRepository = fullBookItemRepository;
+        this.bookRepository = bookRepository;
     }
 
     @Override
-    public List<BookItem> findByAuthor(String author) {
-        return bookItemsByAuthor.get(author);
+    public List<FullBookItem> findByTitle(String title) {
+        return fullBookItemRepository.findByTitle(title);
     }
 
     @Override
-    public List<BookItem> findByIsbn(Long isbn) {
-        return bookItemsByIsbn.get(isbn);
+    public List<FullBookItem> findByAuthor(String name, String surname) {
+        return fullBookItemRepository.findByAuthor(name, surname);
     }
 
     @Override
-    public BookItem findByRfidTag(String rfid) {
-        return bookItemsByRfidTag.getOrDefault(rfid, null);
+    public List<FullBookItem> findByIsbn(Long isbn) {
+        return fullBookItemRepository.findByIsbn(isbn);
+    }
+
+    @Override
+    public FullBookItem findByRfidTag(String rfid) {
+        return fullBookItemRepository.findByRfidTag(rfid).orElse(null);
     }
 
 
-    public List<BookItem> listAll() {
-        return new ArrayList<>(bookItemsByRfidTag.values());
+    public List<FullBookItem> listAll() {
+        return fullBookItemRepository.listAll();
     }
 
     public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
@@ -48,22 +57,23 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
     }
 
     @Override
-    public List<Book> findBookByAuthor(String author) {
 
-        return Optional.ofNullable(findByAuthor(author))
+    public List<FullBook> findBookByAuthor(String name, String surname) {
+
+        return Optional.ofNullable(findByAuthor(name, surname))
                 .map(bookItems -> bookItems.stream()
-                        .filter(distinctByKey(Book::getBookIsbn))
-                        .collect(Collectors.<Book>toList()))
+                        .filter(distinctByKey(FullBook::getBookIsbn))
+                        .collect(Collectors.<FullBook>toList()))
                 .orElse(new ArrayList<>());
     }
 
     @Override
-    public List<Book> findBookByTitle(String title) {
+    public List<FullBook> findBookByTitle(String title) {
         Set<Long> uniqueIsbns = new HashSet<>();
-        List<Book> result = new ArrayList<>();
-        List<BookItem> foundBooks = findByTitle(title);
+        List<FullBook> result = new ArrayList<>();
+        List<FullBookItem> foundBooks = findByTitle(title);
         if (foundBooks != null) {
-            for (BookItem book : foundBooks) {
+            for (FullBookItem book : foundBooks) {
                 if (!uniqueIsbns.contains(book.getBookIsbn())) {
                     result.add(book);
                     uniqueIsbns.add(book.getBookIsbn());
@@ -74,75 +84,16 @@ public class BookItemCatalog implements IManageBookItemCatalog, ISearchBookCatal
     }
 
     @Override
-    public Book findBookByIsbn(Long isbn) {
+    public FullBook findBookByIsbn(Long isbn) {
         if (findByIsbn(isbn) != null) {
             return findByIsbn(isbn).get(0);
         } else return null;
     }
 
-    private void addToBookItemsByIsbn(BookItem book) {
-        if (bookItemsByIsbn.containsKey(book.getBookIsbn())) {
-            bookItemsByIsbn.get(book.getBookIsbn()).add(book);
-        } else {
-            List<BookItem> bookItems = new ArrayList<>();
-            bookItems.add(book);
-            bookItemsByIsbn.put(book.getBookIsbn(), bookItems);
-        }
-    }
-
-    private void addToBookItemsByAuthor(BookItem book) {
-        if (bookItemsByAuthor.containsKey(book.getAuthor())) {
-            bookItemsByAuthor.get(book.getAuthor()).add(book);
-        } else {
-            List<BookItem> bookItems = new ArrayList<>();
-            bookItems.add(book);
-            bookItemsByAuthor.put(book.getAuthor(), bookItems);
-        }
-    }
-
-    private void addToBookItemsByTitle(BookItem book) {
-        if (bookItemsByTitle.containsKey(book.getTitle())) {
-            bookItemsByTitle.get(book.getTitle()).add(book);
-        } else {
-            List<BookItem> bookItems = new ArrayList<>();
-            bookItems.add(book);
-            bookItemsByTitle.put(book.getTitle(), bookItems);
-        }
-    }
-
-    @Override
-    public Boolean add(BookItem book) {
-
-        if (!bookItemsByRfidTag.containsValue(book)) {
-            bookItemsByRfidTag.put(book.getRfidTag(), book);
-
-            addToBookItemsByAuthor(book);
-            addToBookItemsByIsbn(book);
-            addToBookItemsByTitle(book);
-
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public Boolean remove(String rfidTag) {
-        if (bookItemsByRfidTag.containsKey(rfidTag)) {
-            BookItem bookToRemove = findByRfidTag(rfidTag);
-            bookItemsByRfidTag.remove(rfidTag);
-            bookItemsByIsbn.get(bookToRemove.getBookIsbn()).remove(bookToRemove);
-            bookItemsByAuthor.get(bookToRemove.getAuthor()).remove(bookToRemove);
-            bookItemsByTitle.get(bookToRemove.getTitle()).remove(bookToRemove);
-            return true;
-        }
-        return false;
-    }
 
     @Override
     public Set<String> getRfidTags() {
-        Set<String> rfidTags = new HashSet<>();
-        rfidTags.addAll(bookItemsByRfidTag.keySet());
-        return rfidTags;
+      return fullBookItemRepository.getRfidTAgs();
     }
 
 }

@@ -1,7 +1,6 @@
 package libraryManager.service.historyManager;
 
-import libraryManager.model.Account;
-import libraryManager.model.AccountState;
+import libraryManager.entity.Account;
 import libraryManager.model.LentBookInfo;
 import org.testng.annotations.Test;
 
@@ -19,10 +18,10 @@ public class HistoryManagerTest {
         //given
         HistoryManager manager = new HistoryManager();
         LentBookInfo info = new LentBookInfo("bbb", 111L, LocalDate.now(), LocalDate.now().plusDays(30));
-        Account account = new Account(111L, "Edmund Elefant", AccountState.ACTIVE);
+        Account account = new Account(111L, "Edmund Elefant", true);
 
         //when
-        manager.add(account.getAccountId(), info);
+        manager.add(account.getAccountID(), info);
         List<LentBookInfo> history = manager.displayHistory(111L);
 
         //then

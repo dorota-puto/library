@@ -1,5 +1,9 @@
 package libraryManager.service.lendingManager;
 
+import libraryManager.entity.Account;
+import libraryManager.entity.Author;
+import libraryManager.entity.Language;
+import libraryManager.entity.full.FullBookItem;
 import libraryManager.model.*;
 import libraryManager.service.account.ISearchAccountCatalog;
 import libraryManager.service.book.ISearchBookItemCatalog;
@@ -30,11 +34,11 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
-        BookItem book2 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "bbb");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        FullBookItem book2 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
-        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1, book2));
         given(reservationManagerMock.isAllowed("aaa")).willReturn(true);
         given(reservationManagerMock.isReservedForThisAccount(111L, "aaa")).willReturn(false);
@@ -57,11 +61,11 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
-        BookItem book2 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "bbb");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        FullBookItem book2 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
-        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1, book2));
         given(reservationManagerMock.isAllowed("aaa")).willReturn(true);
         given(reservationManagerMock.isReservedForThisAccount(111L, "aaa")).willReturn(false);
@@ -84,10 +88,10 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
-        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1));
         given(reservationManagerMock.isAllowed("aaa")).willReturn(false);
         given(reservationManagerMock.isReservedForThisAccount(111L, "aaa")).willReturn(false);
@@ -104,11 +108,11 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
-        BookItem book2 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "bbb");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        FullBookItem book2 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
-        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1, book2));
         given(reservationManagerMock.isAllowed("aaa")).willReturn(true);
         given(reservationManagerMock.isReservedForThisAccount(111L, "aaa")).willReturn(false);
@@ -134,11 +138,11 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
-        BookItem book2 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "bbb");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        FullBookItem book2 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
-        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1, book2));
         given(reservationManagerMock.isAllowed("aaa")).willReturn(true);
         given(reservationManagerMock.isReservedForThisAccount(111L, "aaa")).willReturn(false);
@@ -160,14 +164,14 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book0 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
-        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "bbb");
-        BookItem book2 = new BookItem(2L, "Pan Tadeusz", "Mickiewicz", "Zysk i Ska", 200, Language.POLISH, "ccc");
-        BookItem book3 = new BookItem(3L, "Potop", "Sienkiewicz", "Zysk i Ska", 200, Language.POLISH, "ddd");
-        BookItem book4 = new BookItem(4L, "Wesele", "Wyspiański", "Zysk i Ska", 200, Language.POLISH, "eee");
+        FullBookItem book0 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
+        FullBookItem book2 = new FullBookItem(2L, "Pan Tadeusz", new Author("Adam","Mickiewicz"), "Zysk i Ska", 200, new Language("polish"), "ccc");
+        FullBookItem book3 = new FullBookItem(3L, "Potop", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 200, new Language("polish"), "ddd");
+        FullBookItem book4 = new FullBookItem(4L, "Wesele", new Author("Stanisław","Wyspiański"), "Zysk i Ska", 200, new Language("polish"), "eee");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
-        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book0, book1));
         given(bookCatalogMock.findByIsbn(2L)).willReturn(Arrays.asList(book2));
         given(bookCatalogMock.findByIsbn(3L)).willReturn(Arrays.asList(book3));
@@ -189,10 +193,10 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book2 = new BookItem(2L, "Pan Tadeusz", "Mickiewicz", "Zysk i Ska", 200, Language.POLISH, "ccc");
+        FullBookItem book2 = new FullBookItem(2L, "Pan Tadeusz", new Author("Adam","Mickiewicz"), "Zysk i Ska", 200, new Language("polish"), "ccc");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
-        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.SUSPENDED));
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", false));
         given(bookCatalogMock.findByIsbn(2L)).willReturn(Arrays.asList(book2));
 
         //when
@@ -207,11 +211,11 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
-        BookItem book2 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "bbb");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        FullBookItem book2 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
-        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
         given(bookCatalogMock.findByIsbn(2L)).willReturn(Arrays.asList(book2));
 
         //when
@@ -228,10 +232,10 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
-        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
         given(bookCatalogMock.findByRfidTag("aaa")).willReturn(book1);
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1));
         given(reservationManagerMock.isAllowed("aaa")).willReturn(true);
@@ -253,10 +257,10 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
-        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
         given(bookCatalogMock.findByRfidTag("aaa")).willReturn(book1);
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book1));
         given(reservationManagerMock.isAllowed("aaa")).willReturn(true);
@@ -286,10 +290,10 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
 
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
-        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", AccountState.ACTIVE));
+        given(accountCatalogMock.findById(111L)).willReturn(new Account(111L, "Edmund Elefant", true));
         given(bookCatalogMock.findByRfidTag("aaa")).willReturn(book1);
 
         //when
@@ -308,9 +312,9 @@ public class BookLendingManagerTest {
         HistoryManager historyManagerMock = mock(HistoryManager.class);
         BookReservationManager reservationManagerMock = mock(BookReservationManager.class);
 
-        BookItem book0 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "aaa");
-        BookItem book1 = new BookItem(1L, "Krzyżacy", "Sienkiewicz", "Zysk i Ska", 350, Language.POLISH, "bbb");
-        BookItem book2 = new BookItem(2L, "Pan Tadeusz", "Mickiewicz", "Zysk i Ska", 200, Language.POLISH, "ccc");
+        FullBookItem book0 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "aaa");
+        FullBookItem book1 = new FullBookItem(1L, "Krzyżacy", new Author("Henryk","Sienkiewicz"), "Zysk i Ska", 350, new Language("polish"), "bbb");
+        FullBookItem book2 = new FullBookItem(2L, "Pan Tadeusz", new Author("Adam","Mickiewicz"), "Zysk i Ska", 200, new Language("polish"), "ccc");
         BookLendingManager bookLendingManager = new BookLendingManager(accountCatalogMock, bookCatalogMock, historyManagerMock, reservationManagerMock);
         given(bookCatalogMock.findByIsbn(1L)).willReturn(Arrays.asList(book0, book1));
 

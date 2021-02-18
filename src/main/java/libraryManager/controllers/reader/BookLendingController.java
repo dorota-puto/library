@@ -1,6 +1,7 @@
-package libraryManager.controllers;
+package libraryManager.controllers.reader;
 
 import libraryManager.dto.LendRequestDTO;
+import libraryManager.dto.ReturnRequestDTO;
 import libraryManager.model.LentBookInfo;
 import libraryManager.service.lendingManager.BookLendingManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class BookLendingController {
     }
 
     @PostMapping("/library/return")
-    ResponseEntity<Void> ret(@RequestBody LendRequestDTO newDTO) {
+    ResponseEntity<Void> ret(@RequestBody ReturnRequestDTO newDTO) {
         if (bookLendingManager.returnBook(newDTO.getAccountId(),newDTO.getRfidTag())) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

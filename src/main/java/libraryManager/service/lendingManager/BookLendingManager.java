@@ -1,7 +1,6 @@
 package libraryManager.service.lendingManager;
 
-import libraryManager.model.AccountState;
-import libraryManager.model.BookItem;
+import libraryManager.entity.full.FullBookItem;
 import libraryManager.model.LentBookInfo;
 import libraryManager.service.account.ISearchAccountCatalog;
 import libraryManager.service.book.ISearchBookItemCatalog;
@@ -10,7 +9,6 @@ import libraryManager.service.reservationManager.BookReservationManager;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class BookLendingManager {
 
@@ -41,21 +39,21 @@ public class BookLendingManager {
 
 
     public int checkBookAvailability(Long isbn) {
-        List<BookItem> byIsbn = bookItemCatalog.findByIsbn(isbn);
+        List<FullBookItem> byIsbn = bookItemCatalog.findByIsbn(isbn);
         if (byIsbn != null) {
             return byIsbn.size();
         }
         return 0;
     }
 
-    private BookItem bookToLent(Long accountId, Long isbn) {
-        List<BookItem> byIsbn = bookItemCatalog.findByIsbn(isbn);
+    private FullBookItem bookToLent(Long accountId, Long isbn) {
+        List<FullBookItem> byIsbn = bookItemCatalog.findByIsbn(isbn);
 
-        return bookItemCatalog.findByIsbn(isbn).stream()
+        return byIsbn.stream()
                 .filter(book -> lentBookInfoByRfidTag.get(book.getRfidTag()) == null)
                 .filter(book -> reservationManager.isReservedForThisAccount(accountId, book.getRfidTag()))
                 .findAny()
-                .orElse(bookItemCatalog.findByIsbn(isbn).stream()
+                .orElse(byIsbn.stream()
                         .filter(book -> lentBookInfoByRfidTag.get(book.getRfidTag()) == null)
                         .filter(book -> reservationManager.isAllowed(book.getRfidTag()))
                         .findAny()
@@ -63,7 +61,7 @@ public class BookLendingManager {
     }
 
     private Boolean isAccountActive(Long accountId) {
-        return accountCatalog.findById(accountId).getState().equals(AccountState.ACTIVE);
+        return accountCatalog.findById(accountId).getActive();
     }
 
     private Boolean canLendMoreBooks(Long accountId) {
@@ -72,7 +70,7 @@ public class BookLendingManager {
 
     public LentBookInfo lend(Long accountId, Long isbn) {
         reservationManager.cancelReservationIfOverDue();
-        BookItem book = bookToLent(accountId, isbn);
+        FullBookItem book = bookToLent(accountId, isbn);
         if (isAccountActive(accountId) &&
                 !hasOverDueBook(accountId) &&
                 checkBookAvailability(isbn) > 0 &&

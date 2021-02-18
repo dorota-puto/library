@@ -1,11 +1,12 @@
 package libraryManager.service.book;
 
-import libraryManager.model.Book;
+import libraryManager.entity.Author;
+import libraryManager.entity.full.FullBook;
 
 import java.util.List;
 
 public interface ISearchBookCatalog {
-    List<Book> findBookByTitle(String title);
-    List<Book> findBookByAuthor(String author);
-    Book findBookByIsbn(Long isbn);
+    List<FullBook> findBookByTitle(String title);
+    List<FullBook> findBookByAuthor(String name, String surname);
+    FullBook findBookByIsbn(Long isbn);
 }

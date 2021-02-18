@@ -1,5 +1,9 @@
 package libraryManager.config;
 
+import libraryManager.repository.AccountRepository;
+import libraryManager.repository.BookItemRepository;
+import libraryManager.repository.BookRepository;
+import libraryManager.repository.FullBookItemRepository;
 import libraryManager.service.account.AccountCatalog;
 import libraryManager.service.book.BookItemCatalog;
 import libraryManager.service.historyManager.HistoryManager;
@@ -11,14 +15,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppConfig {
 
-    @Bean(name = "bookItemCatalog")
-    public BookItemCatalog bookItemCatalog() {
-        return new BookItemCatalog();
-    }
+//    @Bean(name = "bookItemCatalog")
+//    public BookItemCatalog bookItemCatalog() {
+//        return new BookItemCatalog();
+//    }
 
     @Bean(name="accountCatalog")
-    public AccountCatalog accountCatalog(){
-        return new AccountCatalog();
+    public AccountCatalog accountCatalog(AccountRepository accountRepository){
+        return new AccountCatalog(accountRepository);
+    }
+
+    @Bean(name="bookItemCatalog")
+    public BookItemCatalog bookItemCatalog(FullBookItemRepository fullBookItemRepository, BookRepository bookRepository){
+        return new BookItemCatalog(fullBookItemRepository,bookRepository);
     }
 
     @Bean(name="bookLendingManager")

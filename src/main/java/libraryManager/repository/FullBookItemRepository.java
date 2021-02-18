@@ -1,15 +1,21 @@
-package libraryManager.service.book;
+package libraryManager.repository;
 
-import libraryManager.entity.Author;
 import libraryManager.entity.full.FullBookItem;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
-public interface ISearchBookItemCatalog {
+public interface FullBookItemRepository {
     List<FullBookItem> findByTitle(String title);
+
     List<FullBookItem> findByAuthor(String name, String surname);
+
     List<FullBookItem> findByIsbn(Long isbn);
-    FullBookItem findByRfidTag(String rfidTag);
-    Set<String> getRfidTags();
+
+    Optional<FullBookItem> findByRfidTag(String rfidTag);
+
+    List<FullBookItem> listAll();
+
+    Set<String> getRfidTAgs();
 }

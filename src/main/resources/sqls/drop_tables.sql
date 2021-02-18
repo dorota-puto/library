@@ -1,0 +1,26 @@
+DROP TABLE IF EXISTS Lent_book_info;
+
+DROP TABLE IF EXISTS Reserved_book_info;
+
+DROP TABLE IF EXISTS Account;
+
+DROP TABLE IF EXISTS Book_item;
+
+DROP TABLE IF EXISTS Book;
+
+DROP TABLE IF EXISTS Author;
+
+DROP TABLE IF EXISTS Publisher;
+
+DROP TABLE IF EXISTS `Language`;
+
+
+
+
+
+
+
+
+
+
+

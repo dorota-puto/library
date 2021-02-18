@@ -1,53 +1,43 @@
 package libraryManager.service.account;
 
-import libraryManager.model.Account;
-import libraryManager.model.AccountState;
+import libraryManager.entity.Account;
+import libraryManager.repository.AccountRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
+
+//todo: remove me
 public class AccountCatalog implements ISearchAccountCatalog, IManageAccountCatalog {
 
-    private Map<Long, Account> accountById = new HashMap<>();
+    private AccountRepository accountRepository;
 
-    public List<Account> listAll(){
-        return new ArrayList<>(accountById.values());
+    public AccountCatalog(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
+
+    public List<Account> listAll() {
+        return accountRepository.findAll();
     }
 
     @Override
     public Boolean add(Account account) {
-        if (!accountById.containsKey(account.getAccountId())) {
-            accountById.put(account.getAccountId(), account);
-            return true;
-        }
-        return false;
+        return accountRepository.save(account);
     }
 
     @Override
     public Boolean suspend(Long id) {
-        if (accountById.containsKey(id)) {
-            accountById.get(id).setState(AccountState.SUSPENDED);
-        } else {
-            return false;
-        }
-        return true;
+        return accountRepository.updateActive(id, false);
     }
 
     @Override
     public Boolean unSuspend(Long id) {
-        if (accountById.containsKey(id)) {
-            Account account = accountById.get(id);
-            account.setState(AccountState.ACTIVE);
-            return true;
-        } else {
-            return false;
-        }
+        return accountRepository.updateActive(id, true);
     }
 
     @Override
     public Account findById(Long id) {
-        return accountById.get(id);
+        Optional<Account> accountEntity = accountRepository.findById(id);
+        return accountEntity.orElse(null);
     }
 }

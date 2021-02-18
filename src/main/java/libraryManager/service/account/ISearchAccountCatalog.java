@@ -1,6 +1,6 @@
 package libraryManager.service.account;
 
-import libraryManager.model.Account;
+import libraryManager.entity.Account;
 
 public interface ISearchAccountCatalog {
     Account findById(Long id);
