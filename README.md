@@ -1,7 +1,7 @@
 # Library Management Tool 
 
 ## Main project idea
-Design and implementation of a backend system exposing REST API to support simple library management.
+Design and implementation of backend service exposing REST API to support simple library management.
 
 ## Gained sills
 * Familiarized myself with Object Oriented Design Principles.
