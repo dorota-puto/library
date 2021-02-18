@@ -15,3 +15,9 @@ Design and implementation of a backend system exposing REST API to support simpl
 * SQL (MySQL)
 * Spring Boot
 * REST
+
+## Diagrams
+
+### Entity Relationship Diagram
+
+![LibraryEntityDiagram](https://user-images.githubusercontent.com/53584321/108424188-2686c180-7239-11eb-8cdf-9836e2adaa62.jpg)
