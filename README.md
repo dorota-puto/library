@@ -20,4 +20,4 @@ Design and implementation of backend service exposing REST API to support simple
 
 ### Entity Relationship Diagram
 
-![LibraryEntityDiagram](https://user-images.githubusercontent.com/53584321/108424188-2686c180-7239-11eb-8cdf-9836e2adaa62.jpg)
+![LibraryEntityDiagramBig](https://user-images.githubusercontent.com/53584321/108425438-bf6a0c80-723a-11eb-8f53-5bc3f3ffea21.jpg)
